@@ -117,13 +117,23 @@
   .modal-btns{display:flex; flex-direction:column; gap:8px}
   .modal-btns .pbtn{width:100%; padding:8px 0; font-size:12px}
   /* ===== 封面 ===== */
-  #scr-cover{align-items:center; text-align:center}
-  #scr-cover .cover-img{margin:18px 0 14px; border:3px solid var(--line)}
+  /* 窄屏上封面内容可能高于容器，必须允许滚动，否则底部元素会被整块裁掉 */
+  #scr-cover{align-items:center; text-align:center; overflow-y:auto; padding:0 12px}
+  /* max-width 兜住 320px 这类超窄屏：封面图固定 320 宽会横向溢出 */
+  #scr-cover .cover-img{margin:18px 0 14px; border:3px solid var(--line); max-width:100%; height:auto; flex:none}
   #scr-cover h1{font-size:24px; line-height:30px; letter-spacing:4px; color:var(--ink)}
   #scr-cover .sub{color:var(--muted); margin:8px 0 4px}
   #scr-cover .stage-line{color:var(--red); margin-bottom:14px}
   #scr-cover .pbtn{margin:6px 0 14px}
-  #scr-cover .hero-strip{display:flex; align-items:flex-end; gap:10px; color:var(--muted); font-size:12px}
+  #scr-cover .hero-strip{display:flex; align-items:flex-end; gap:10px; color:var(--muted); font-size:12px; flex:none}
+  /* 封面页脚：玩法 / 素材署名 / 版本，兼作页面收尾，填住底部空白 */
+  #scr-cover .cover-foot{
+    width:100%; max-width:300px; margin:auto 0 12px; padding-top:9px;
+    border-top:2px dashed var(--line); text-align:left;
+    color:var(--muted); font-size:10px; line-height:15px; flex:none;
+  }
+  #scr-cover .cover-foot .cf-i{display:flex; gap:6px}
+  #scr-cover .cover-foot .cf-i b{color:var(--ink); font-weight:normal; flex:none}
   /* ===== 档案录入 ===== */
   #scr-create{align-items:center; padding:10px 14px; overflow-y:auto}
   #scr-create h1{font-size:24px; line-height:30px; margin:4px 0 2px; letter-spacing:2px}
@@ -397,6 +407,12 @@
   .gain-up{color:var(--red); font-weight:bold}
   .gain-down{color:var(--green); font-weight:bold}
   .r-foot{padding:0 10px 12px; text-align:center}
+  /* 本幕小结：幕次进度 + 累积处理量 + 晋升条件自查，填住结算页底部空白 */
+  .r-sum .sum-row{display:flex; gap:6px; align-items:flex-start; line-height:17px}
+  .r-sum .sum-row i{font-style:normal; color:var(--muted); flex:none; width:34px}
+  .r-sum .sum-row .ok{color:var(--green)}
+  .r-sum .sum-row .no{color:var(--red)}
+  .r-sum .sum-row .star-meter{line-height:17px}
   /* ===== 结局屏 ===== */
   #scr-ending{align-items:center; text-align:center; padding:14px 14px; overflow-y:auto}
   #scr-ending .badge-img{width:64px; height:64px; margin:10px 0 6px}
@@ -567,6 +583,11 @@
       <div class="hero-strip" data-page-node-id="tsHpzvsgk1UozkwQOLeDvI">
         <img src="assets/img/portraits/hero_v1.png" height="72" alt="主角 · 普通志愿者" data-page-node-id="cfBt56YFouvIpLLthnF7zN">
         <span data-page-node-id="3DcfCLtzBjejUXBcPV45NN">从一天的网格值守开始</span>
+      </div>
+      <div class="cover-foot">
+        <div class="cf-i"><b>玩法</b><span>接网格事件 · 做出选择 · 属性成长 · 走完你的楼长三年</span></div>
+        <div class="cf-i"><b>素材</b><span>像素画与音效自制 · BGM「Dreamy Flashback」Kevin MacLeod（CC BY 4.0）</span></div>
+        <div class="cf-i"><b>版本</b><span>v1.0 · 存档与结局收集册保存在本机</span></div>
       </div>
     </section>
 
@@ -2200,6 +2221,19 @@ function renderResult(i){
         <div class="bubble who" data-who="金老师">${o.review}</div>
       </div>
     </div>` : "";
+  // 本幕小结：进度 + 晋升条件自查（公益初心按铁律只显星级不显数值）
+  const negCount = Object.values(special).filter(v => v === "negative").length;
+  const sumRows = [];
+  sumRows.push(`<div class="sum-row"><i>进度</i><span>${roundTotal > 1 ? `第 ${roundNo}/${roundTotal} 幕 · ` : ""}节点 ${idx + 1} / ${STORY.length}</span></div>`);
+  sumRows.push(`<div class="sum-row"><i>初心</i>${starMark(state.gongyi)}</div>`);
+  if (!promoted){
+    sumRows.push(`<div class="sum-row"><i>信任</i><span>居民信任 ${state.xinren}</span></div>`);
+    sumRows.push(`<div class="sum-row"><i>高危</i><span class="${negCount ? "no" : "ok"}">${negCount ? "有负面记录" : "无负面记录"}</span></div>`);
+  } else {
+    const mgr = ATTR.filter(a => a.locked).map(a => `${a.name} ${state[a.key]}`).join(" · ");
+    sumRows.push(`<div class="sum-row"><i>管理</i><span>${mgr}</span></div>`);
+    sumRows.push(`<div class="sum-row"><i>高危</i><span class="${negCount ? "no" : "ok"}">${negCount ? "有负面记录" : "无负面记录"}</span></div>`);
+  }
   $("r-body").innerHTML = `
     <span class="trigger">${STORY[idx].title} · 你的选择</span>
     <div class="r-block"><div class="r-title">属性收益</div><div class="gain-list">${gainHtml}</div></div>
@@ -2214,7 +2248,8 @@ function renderResult(i){
       </div>
     </div>
     ${reviewBlock}
-    <div class="r-block"><div class="r-title">晋升影响</div><div>${o.promo}</div></div>`;
+    <div class="r-block"><div class="r-title">晋升影响</div><div>${o.promo}</div></div>
+    <div class="r-block r-sum"><div class="r-title">本幕小结</div>${sumRows.join("")}</div>`;
   const isLast = idx === STORY.length - 1;
   $("r-next").textContent = isLast ? "查看结局 →" : "继续下一幕 →";
   document.querySelector(".result-scroll").scrollTop = 0;
