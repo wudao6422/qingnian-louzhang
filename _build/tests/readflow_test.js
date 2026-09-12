@@ -1,4 +1,4 @@
-// 阅读两拍：先事件后内心，二者不同时出现（phase-read-event -> phase-read-inner -> phase-choose）
+// 阅读两拍：剧情先出现，点击后内心在剧情下方追加显示（phase-read-event -> phase-read-inner -> phase-choose）
 const fs = require('fs');
 const vm = require('vm');
 const html = fs.readFileSync('C:/Users/songting/Desktop/青春楼长行动材料总结/游戏方案/qclz/pixel/index.html', 'utf8');

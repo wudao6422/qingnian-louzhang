@@ -348,9 +348,8 @@
     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
   }
   .phase-choose .continue-hint{display:none}
-  /* 阅读两拍：先事件后内心，二者不同时出现 */
+  /* 阅读两拍：剧情先出现，点击后内心在剧情下方追加显示（不隐藏剧情） */
   #scr-story.phase-read-event #s-thought{display:none}
-  #scr-story.phase-read-inner #s-narration{display:none}
   .phase-choose .opts{display:flex; order:3; animation:fadeup .25s steps(4) both}
   @keyframes fadeup{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
   /* 内容超出时的上滑提示条（放在 story-scroll 流内最底部，不遮挡选项） */
@@ -1674,21 +1673,21 @@ function typeInto(el, text, speed, done){
     }
   })();
 }
-// 读完点击「继续」：先事件后内心，两拍走完再进选择态
+// 读完点击「继续」：先事件后内心，内心在剧情下方追加显示，两拍走完再进选择态
 function advanceReading(){
   const n = STORY[idx];
   if (readingStep === "event"){
     const monoText = (n && n.inner) || "";
     if (!monoText){ enterChoose(); return; }   // 该节点无内心，直接进选择
-    // 第二拍：隐藏事件，单独显示内心
+    // 第二拍：内心追加在剧情下方，剧情保持可见
     $("scr-story").classList.remove("phase-read-event");
     $("scr-story").classList.add("phase-read-inner");
     stopTyping();
     $("s-continue").classList.remove("ready");
     readingStep = "inner";
     typeInto($("s-mono"), monoText, 26, () => { $("s-continue").classList.add("ready"); });
-    const sc = document.querySelector(".story-scroll");
-    if (sc) sc.scrollTop = 0;
+    const th = $("s-thought");
+    if (th && th.scrollIntoView) th.scrollIntoView({block:"end"});   // 视角跟到内心处
   } else {
     enterChoose();
   }
