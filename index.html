@@ -388,8 +388,7 @@
     border:1px solid var(--muted); padding:0 2px; margin-left:2px; border-radius:2px;
   }
   /* ===== 结算屏 ===== */
-  .result-scroll{flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; justify-content:space-between}
-  .result-scroll > .trigger{align-self:flex-start}
+  .result-scroll{flex:1; overflow-y:auto; padding:10px}
   .r-block{background:var(--card); border:3px solid var(--line); padding:8px 10px; margin-bottom:8px}
   .r-title{font-weight:bold; margin-bottom:4px}
   .gain-list{display:flex; flex-direction:column; gap:4px}
@@ -400,11 +399,6 @@
   .r-foot{padding:0 10px 12px; text-align:center}
   /* ===== 结局屏 ===== */
   #scr-ending{align-items:center; text-align:center; padding:14px 14px; overflow-y:auto}
-  /* 长屏手机上内容短时整体垂直居中，避免底部留大片空白。
-     用伪元素吃余量（而不是给首尾子元素加 margin:auto）：①不受后续同优先级规则覆盖；②不依赖"最后一个子元素"，
-     因为末尾的 #btn-switch 常常是 display:none。内容超出时 auto 归零，自动退回顶端滚动，不会裁掉顶部。 */
-  #scr-ending::before,
-  #scr-ending::after{content:""; margin:auto}
   #scr-ending .badge-img{width:64px; height:64px; margin:10px 0 6px}
   #scr-ending h1{font-size:24px; line-height:30px; margin:6px 0 10px}
   #scr-ending .ending-text{
