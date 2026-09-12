@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="cuu1VT90o1rAuCGezSiSBf">
+<head data-page-node-id="tH6OxL0UrXsj5O5Cwxa0OD">
+<meta charset="UTF-8" data-page-node-id="YCGsoZAozozj2luq0FA1p1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="tWDLgFCF3iD4Ka9OC6otI0">
+<title>青年楼长成长记 · 像素版</title>
+<style>
+  @font-face{
+    font-family:"FusionPixel";
+    src:url("assets/font/fusion-pixel-12px-proportional-zh_hans.woff2") format("woff2");
+    font-display:swap;
+  }
+  :root{
+    --paper:#f7f0e4; --paper2:#efe6d6; --card:#ffffff;
+    --ink:#2b2622; --muted:#6b6157; --line:#5a4f47;
+    --red:#e8503a; --red-d:#b5362a; --gold:#ffcb47; --gold-d:#e0a020;
+    --blue:#4a90c2; --blue-l:#8fc7e8; --green:#3a8f4e; --purple:#8a6fb0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  img{image-rendering:pixelated; display:block}
+  html,body{height:100%}
+  body{
+    background:#2b2622;
+    display:flex; align-items:safe center; justify-content:center;
+    font-family:"FusionPixel","PingFang SC","Microsoft YaHei",monospace;
+    font-size:12px; line-height:18px; color:var(--ink);
+    -webkit-font-smoothing:none;
+  }
+  /* ===== 手机外框 392×700，内容区 360×640 ===== */
+  .phone{
+    width:392px; height:700px; background:#1c1815; border-radius:28px;
+    padding:16px; box-shadow:0 0 0 3px #3a2e2a, 0 24px 64px rgba(0,0,0,.55);
+    position:relative;
+  }
+  .phone::before{ /* 听筒 */
+    content:""; position:absolute; top:6px; left:50%; transform:translateX(-50%);
+    width:56px; height:5px; background:#3a2e2a; border-radius:3px;
+  }
+  .screen{
+    width:360px; height:668px; background:var(--paper);
+    border:3px solid var(--line); border-radius:8px;
+    overflow:hidden; position:relative;
+  }
+  /* ===== 状态栏 ===== */
+  .statusbar{
+    height:24px; background:#2b2622; color:#f7f0e4;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 10px; font-size:12px; line-height:1;
+  }
+  .statusbar .sicons{display:flex; gap:5px; align-items:center}
+  .statusbar .sicons img{width:16px; height:16px}
+  /* 背景音乐开关（状态栏内，与信号图标同排） */
+  .bgm-btn{
+    position:relative; display:flex; align-items:center; justify-content:center;
+    width:20px; height:20px; padding:0; margin-right:1px;
+    background:none; border:0; cursor:pointer;
+  }
+  .bgm-btn img{width:16px; height:16px; display:block; transition:opacity .15s}
+  .bgm-btn.off img{opacity:.38}
+  /* 播放中：喇叭口跳三格波，像素风 steps 动画 */
+  .bgm-btn .bgm-wave{
+    position:absolute; right:1px; top:6px;
+    display:none; width:3px; height:3px;
+    background:var(--gold);
+  }
+  .bgm-btn.on .bgm-wave{display:block; animation:bgmbeat .8s steps(2,start) infinite}
+  @keyframes bgmbeat{
+    0%  {transform:scale(1); opacity:1}
+    50% {transform:scale(1.6); opacity:.4}
+    100%{transform:scale(1); opacity:1}
+  }
+  /* 菜单按钮（状态栏内，与音乐按钮同排） */
+  .menu-btn{
+    display:flex; align-items:center; justify-content:center;
+    width:20px; height:20px; padding:0; margin-left:1px;
+    background:none; border:0; cursor:pointer;
+  }
+  .menu-btn img{width:16px; height:16px; display:block}
+  /* 音效开关（与背景音乐按钮同排，用语音图标区分） */
+  .sfx-btn{
+    position:relative; display:flex; align-items:center; justify-content:center;
+    width:20px; height:20px; padding:0; margin-right:1px;
+    background:none; border:0; cursor:pointer;
+  }
+  .sfx-btn img{width:16px; height:16px; display:block; transition:opacity .15s}
+  .sfx-btn.off img{opacity:.38}
+  /* ===== 页面切换 ===== */
+  .page{position:absolute; inset:24px 0 0 0; display:none; flex-direction:column; background:var(--paper)}
+  .page.active{display:flex}
+  /* ===== 像素按钮 ===== */
+  .pbtn{
+    font-family:inherit; font-size:12px; cursor:pointer;
+    background:var(--red); color:#fff; border:3px solid var(--line);
+    padding:10px 0; width:200px; text-align:center;
+    box-shadow:0 4px 0 var(--red-d);
+  }
+  .pbtn:active{transform:translateY(4px); box-shadow:0 0 0 var(--red-d)}
+  .pbtn.blue{background:var(--blue); box-shadow:0 4px 0 #2f6b94}
+  .pbtn.blue:active{box-shadow:0 0 0 #2f6b94}
+  /* 次要按钮（浅底描边）：用于「重新开始」这类不该抢戏的选项 */
+  .pbtn.ghost{background:#fff; color:var(--ink); box-shadow:0 4px 0 #b3a89c}
+  .pbtn.ghost:active{box-shadow:0 0 0 #b3a89c}
+  /* ===== 弹层（菜单 / 二次确认）===== */
+  .modal-mask{
+    position:absolute; inset:0; z-index:60; display:none;
+    align-items:center; justify-content:center; padding:20px;
+    background:rgba(30,24,20,.62);
+  }
+  .modal-mask.on{display:flex}
+  .modal-box{
+    width:100%; max-width:280px; background:var(--paper);
+    border:3px solid var(--line); box-shadow:0 6px 0 #b3a89c;
+    padding:12px 12px 14px; text-align:center;
+  }
+  .modal-title{font-size:13px; line-height:19px; font-weight:bold; color:var(--ink); margin-bottom:5px}
+  .modal-text{font-size:12px; line-height:18px; color:var(--muted); margin-bottom:12px; text-align:left}
+  .modal-btns{display:flex; flex-direction:column; gap:8px}
+  .modal-btns .pbtn{width:100%; padding:8px 0; font-size:12px}
+  /* ===== 封面 ===== */
+  #scr-cover{align-items:center; text-align:center}
+  #scr-cover .cover-img{margin:18px 0 14px; border:3px solid var(--line)}
+  #scr-cover h1{font-size:24px; line-height:30px; letter-spacing:4px; color:var(--ink)}
+  #scr-cover .sub{color:var(--muted); margin:8px 0 4px}
+  #scr-cover .stage-line{color:var(--red); margin-bottom:14px}
+  #scr-cover .pbtn{margin:6px 0 14px}
+  #scr-cover .hero-strip{display:flex; align-items:flex-end; gap:10px; color:var(--muted); font-size:12px}
+  /* ===== 档案录入 ===== */
+  #scr-create{align-items:center; padding:10px 14px; overflow-y:auto}
+  #scr-create h1{font-size:24px; line-height:30px; margin:4px 0 2px; letter-spacing:2px}
+  #scr-create .lead{color:var(--muted); margin-bottom:10px}
+  #scr-create .cover-banner{
+    width:100%; height:92px; border:3px solid var(--line); background:var(--paper2);
+    object-fit:cover; image-rendering:pixelated; margin-bottom:10px; display:block;
+  }
+  .mentor-card{display:flex; gap:8px; align-items:flex-start; width:100%;
+    background:var(--paper2); border:2px solid var(--line); padding:7px 9px; margin-bottom:10px}
+  .mentor-card > img{width:36px; height:36px; border:2px solid var(--line);
+    background:#fff; flex:none; image-rendering:pixelated}
+  .mentor-card .mc-name{color:var(--red); font-weight:bold; font-size:12px; line-height:16px}
+  .mentor-card .mc-text{font-size:12px; line-height:17px; color:var(--ink); margin-top:2px}
+  .badge-row{display:flex; gap:8px; align-items:center; justify-content:center;
+    background:var(--card); border:2px dashed var(--line); padding:7px 8px; margin-bottom:12px}
+  .badge-row .bd-lab{font-size:11px; color:var(--muted); line-height:14px; flex:none; max-width:70px}
+  .badge-row .bds{display:flex; gap:5px}
+  .badge-row .bds img{width:32px; height:32px; border:2px solid var(--line);
+    background:var(--paper2); image-rendering:pixelated}
+  .profile-card{display:flex; gap:10px; width:100%; background:var(--card);
+    border:3px solid var(--line); padding:8px; margin-bottom:10px}
+  .profile-card > img{width:80px; height:80px; border:2px solid var(--line); background:var(--paper2); flex:none}
+  .profile-fields{flex:1; min-width:0}
+  .fld{margin-bottom:8px}
+  .fld .lab{display:flex; align-items:center; gap:5px; margin-bottom:4px; color:var(--muted)}
+  .fld .lab i{width:8px; height:8px; background:var(--red); display:inline-block}
+  .pix-input{font-family:inherit; font-size:12px; line-height:18px; width:100%; height:32px;
+    padding:4px 8px; background:#fff; border:3px solid var(--line); color:var(--ink)}
+  .pix-input:focus{outline:none; border-color:var(--red)}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{font-family:inherit; font-size:12px; line-height:16px; padding:4px 8px; cursor:pointer;
+    background:#fff; border:2px solid var(--line); color:var(--ink); box-shadow:0 3px 0 #b3a89c}
+  .chip.on{background:var(--red); color:#fff; box-shadow:0 3px 0 var(--red-d)}
+  .chip:active{transform:translateY(3px); box-shadow:none}
+  .bonus{width:100%; background:var(--paper2); border:2px solid var(--line);
+    padding:5px 8px; margin-bottom:10px; line-height:18px}
+  .bonus b{color:var(--red)}
+  .bonus .none{color:var(--muted)}
+  .arch-bar{display:flex; align-items:center; gap:6px; padding:3px 10px;
+    background:var(--paper2); border-bottom:2px solid var(--line); color:var(--muted)}
+  .arch-bar .nm{color:var(--ink); font-weight:bold}
+  /* ===== HUD 属性区 ===== */
+  .hud{
+    display:grid; grid-template-columns:repeat(var(--hud-cols,3),1fr); gap:4px;
+    padding:6px; background:var(--paper2); border-bottom:3px solid var(--line);
+  }
+  /* 管理属性锁定提示条：晋升小队长后才启用统筹规划 / 组织协调 / 对外联络 */
+  .lock-note{
+    padding:3px 8px; font-size:10px; line-height:14px; text-align:center;
+    background:var(--paper2); color:var(--muted); border-bottom:2px solid var(--line);
+  }
+  .lock-note.on{color:var(--red); background:#fdf0e6}
+  /* 锁定标记：档案屏与结算屏里标注"晋升后才启用"的属性 */
+  .lk{
+    display:inline-block; margin-left:3px; padding:0 2px;
+    background:var(--muted); color:#fff; font-size:8px; line-height:10px;
+  }
+  .dim{color:var(--muted)}
+  .attr{
+    display:flex; align-items:center; gap:3px;
+    background:var(--card); border:2px solid var(--line); padding:2px 3px;
+    min-width:0; overflow:hidden;
+  }
+  .attr img{width:24px; height:24px; flex:none}
+  .attr .tx{min-width:0}
+  .attr .nm{font-size:10px; line-height:12px; color:var(--muted); white-space:nowrap}
+  .attr .vl{font-size:12px; line-height:14px; font-weight:bold; color:var(--ink)}
+  /* 公益初心是唯一的隐藏属性，星级需要横向空间：跨两列，避免 4 列布局下第 5 颗星被裁 */
+  .attr.heart{grid-column:span 2}
+  .attr.heart .vl{color:var(--red)}
+  /* 公益初心星级：实心红★=已达档位，空心橙☆=正在接近下一档，空心灰☆=未达成 */
+  .star-meter{line-height:14px; letter-spacing:0; white-space:nowrap; display:inline-block}
+  .star-meter .on{color:var(--red)}
+  .star-meter .near{color:#f0a020}
+  .star-meter .off{color:#c9bdb6}
+  /* ===== 剧情区 ===== */
+/* ===== 节点类型条：日常循环 / 月度随机 / 人际互动 / 高危特殊事件 ===== */
+.node-bar{
+  display:flex; align-items:center; gap:6px; padding:4px 10px;
+  background:var(--paper2); border-bottom:3px solid var(--line);
+}
+.node-tag{
+  font-size:10px; line-height:14px; padding:1px 6px;
+  border:2px solid var(--line); background:var(--card); color:var(--ink); flex:none;
+}
+.node-tag.t-daily{background:#dfeaf5}
+.node-tag.t-monthly{background:#ffeccc}
+.node-tag.t-inter{background:#dff0dd}
+.node-tag.t-special{background:#f7d3cc; color:#8f2013}
+.node-trig{font-size:10px; line-height:14px; color:var(--muted); overflow:hidden; white-space:nowrap; text-overflow:ellipsis}
+.node-idx{margin-left:auto; font-size:10px; line-height:14px; color:var(--muted); flex:none}
+.danger-bar{
+  display:none; background:var(--red); color:#fff; font-size:10px; line-height:16px;
+  padding:3px 8px; margin-bottom:8px; border:2px solid var(--red-d); text-align:center;
+}
+.danger-bar.on{display:block; animation:blink 1.2s steps(2, start) infinite}
+@keyframes blink{0%,100%{opacity:1} 50%{opacity:.55}}
+.node-title{font-size:12px; line-height:18px; font-weight:bold; color:var(--ink); margin-bottom:8px}
+.story-scroll{flex:1; overflow-y:auto; padding:10px}
+.trigger{
+    display:inline-block; background:var(--gold); color:var(--ink);
+    border:2px solid var(--line); padding:2px 8px; margin-bottom:8px;
+    font-size:12px; font-weight:bold;
+  }
+  .scene-frame{position:relative; overflow:visible; border:3px solid var(--line); margin-bottom:10px; background:#fff}
+  .scene-frame img{width:320px; height:240px; margin:0 auto}
+  .dialog{display:flex; gap:8px; margin-bottom:10px; align-items:flex-start}
+  .dialog img.face{width:64px; height:64px; border:3px solid var(--line); background:#fff; flex:none}
+  .bubble{
+    flex:1; background:var(--card); border:3px solid var(--line);
+    padding:8px 10px; font-size:12px; line-height:18px; position:relative;
+  }
+  .bubble.who::before{
+    content:attr(data-who); position:absolute; top:-20px; left:-3px;
+    background:var(--blue); color:#fff; border:2px solid var(--line);
+    padding:0 6px; font-size:12px; line-height:16px;
+  }
+  .bubble.mono{font-style:normal; color:var(--muted)}
+  .bubble.mono b{color:var(--ink)}
+
+  /* ===== 处境叙述条：客观事件，无气泡，左侧红标条 ===== */
+  .narration{
+    display:flex; gap:8px; margin-bottom:6px;
+    border-left:4px solid var(--red); padding:2px 0 2px 8px;
+  }
+  .narration img.nar-face{
+    width:32px; height:32px; border:2px solid var(--line); background:#fff;
+    flex:none; display:none;
+  }
+  .narration.has-face img.nar-face{display:block}
+  .nar-body{flex:1; min-width:0}
+  .nar-tag{
+    display:inline-block; margin-bottom:4px;
+    background:var(--gold); color:var(--ink); border:2px solid var(--line);
+    padding:0 6px; font-size:12px; line-height:16px; font-weight:bold;
+  }
+  .nar-text{font-size:12px; line-height:18px; color:var(--ink)}
+
+  /* ===== 内心气泡（同屏显示，干净描边，无缺口） ===== */
+  .thought-inline{
+    display:flex; gap:8px; align-items:flex-end; margin-bottom:4px;
+  }
+  .ti-face{
+    width:48px; height:48px; border:3px solid var(--line); background:#fff; flex:none;
+  }
+  .tdots{display:flex; align-items:flex-end; gap:3px; flex:none; padding-bottom:6px}
+  .tdots i{display:block; background:var(--card); border:2px solid var(--line); border-radius:50%}
+  .tdots i:nth-child(1){width:5px; height:5px}
+  .tdots i:nth-child(2){width:8px; height:8px}
+  .tdots i:nth-child(3){width:11px; height:11px}
+  .tbubble{
+    position:relative; flex:1; min-width:0;
+    background:var(--card); border:3px solid var(--line); border-radius:10px;
+    padding:12px 12px 10px; font-size:12px; line-height:18px; color:var(--ink);
+    animation:cloudpop .18s both;
+  }
+  .tbubble .t-tag{
+    position:absolute; top:-12px; left:10px; right:auto;
+    background:var(--purple); color:#fff; border:2px solid var(--line);
+    padding:0 8px; font-size:12px; line-height:16px;
+  }
+  /* 打字机光标：CSS 方块，不依赖字体字形 */
+  .caret{
+    display:inline-block; width:6px; height:14px; background:var(--ink);
+    vertical-align:-2px; margin-left:1px; animation:blink 1s steps(2,start) infinite;
+  }
+  @keyframes cloudpop{from{transform:scale(.9); opacity:.3} to{transform:scale(1); opacity:1}}
+  /* ===== 两阶段：阅读态 / 选择态 ===== */
+  .continue-hint{
+    display:none; text-align:center; color:var(--red); font-size:12px; line-height:18px;
+    padding:6px 0; cursor:pointer; border:2px dashed var(--red); margin-top:6px;
+  }
+  .continue-hint.ready{display:block; animation:blink 1.1s steps(2,start) infinite}
+  .opts{display:none}
+  /* 选择态：场景隐藏，阅读区压缩成顶部长条，选项浮现 */
+  /* 选择态：顶部短文本 + 场景横幅 + 选项，避免场景 flex 过大把选项顶出可视区 */
+  .phase-choose .story-scroll{
+    display:flex; flex-direction:column; flex:1;
+    padding-bottom:18px; overflow-y:auto;
+  }
+  .phase-choose .read-panel{
+    order:1; flex:none;
+    border:2px solid var(--line); background:var(--paper2);
+    padding:5px 8px; margin-bottom:6px;
+  }
+  .phase-choose .scene-frame{
+    order:2; display:block; flex:none;
+    width:100%; height:auto; margin-bottom:6px; position:relative;
+    border:2px solid var(--line); background:#fff;
+  }
+  .phase-choose .scene-frame img{
+    width:100%; height:auto; max-height:240px; object-fit:contain; display:block;
+  }
+  .phase-choose .scene-frame::after{
+    content:"现场"; position:absolute; left:0; bottom:0;
+    background:var(--line); color:#f7f0e4; font-size:9px; line-height:13px;
+    padding:0 5px; border-top:2px solid var(--line); border-right:2px solid var(--line);
+  }
+  .phase-choose .narration{margin-bottom:3px; border-left-width:3px}
+  .phase-choose .nar-tag{font-size:11px; line-height:15px; padding:0 5px}
+  .phase-choose .nar-text{
+    font-size:11px; line-height:15px; max-height:45px; overflow:hidden;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+  }
+  .phase-choose .thought-inline{display:none}
+  .phase-choose .ti-face, .phase-choose .tdots{display:none}
+  .phase-choose .tbubble{padding:5px 8px}
+  .phase-choose .tbubble .t-tag{font-size:10px; line-height:14px; top:-10px; left:8px; right:auto; padding:0 5px}
+  .phase-choose #s-mono{
+    font-size:11px; line-height:15px; max-height:45px; overflow:hidden;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+  }
+  .phase-choose .continue-hint{display:none}
+  /* 阅读两拍：先事件后内心，二者不同时出现 */
+  #scr-story.phase-read-event #s-thought{display:none}
+  #scr-story.phase-read-inner #s-narration{display:none}
+  .phase-choose .opts{display:flex; order:3; animation:fadeup .25s steps(4) both}
+  @keyframes fadeup{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
+  /* 内容超出时的上滑提示条（放在 story-scroll 流内最底部，不遮挡选项） */
+  .phase-choose .scroll-hint{order:4}
+  .scroll-hint{
+    position:sticky; bottom:6px; align-self:center;
+    background:var(--line); color:#f7f0e4; font-size:9px; line-height:13px;
+    padding:2px 8px; border-radius:9px; pointer-events:none; z-index:6;
+    display:none; white-space:nowrap;
+    box-shadow:0 1px 0 rgba(0,0,0,.25);
+    animation:hintbob 1.1s ease-in-out infinite;
+  }
+  .scroll-hint.show{display:block}
+  @keyframes hintbob{0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-3px)}}
+  /* ===== 选项 ===== */
+  .opts{padding:0 10px 12px; flex-direction:column; gap:8px}
+  .opt{
+    font-family:inherit; font-size:12px; line-height:18px; text-align:left; cursor:pointer;
+    background:var(--card); border:3px solid var(--line); padding:8px 10px; color:var(--ink);
+    box-shadow:0 3px 0 #b3a89c;
+  }
+  .opt:hover{background:#fff8e8; border-color:var(--red)}
+  .opt:active{transform:translateY(3px); box-shadow:none}
+  .opt b{color:var(--red)}
+  /* 选项内：序号 + 文本 + 属性影响预览 */
+  .opt-main{display:flex; gap:6px; align-items:flex-start}
+  .opt-no{
+    flex:none; width:18px; height:18px; margin-top:1px;
+    background:var(--red); color:#fff; border:2px solid var(--line);
+    font-size:11px; line-height:18px; text-align:center; font-weight:bold;
+  }
+  .opt-t{flex:1; min-width:0}
+  .opt-gain{
+    margin-top:5px; padding-top:5px; border-top:2px dotted #d8cbb8;
+    display:flex; flex-wrap:wrap; gap:3px 8px; align-items:center;
+    font-size:10px; line-height:15px; color:var(--muted);
+  }
+  .opt-gain::before{content:"影响："; color:var(--muted); flex:none}
+  .gi{font-weight:bold; white-space:nowrap}
+  .gi.up{color:var(--red)}
+  .gi.down{color:var(--green)}
+  .gi.flat{color:var(--muted); font-weight:normal}
+  .gi .lk{
+    font-style:normal; font-size:9px; color:var(--muted);
+    border:1px solid var(--muted); padding:0 2px; margin-left:2px; border-radius:2px;
+  }
+  /* ===== 结算屏 ===== */
+  .result-scroll{flex:1; overflow-y:auto; padding:10px}
+  .r-block{background:var(--card); border:3px solid var(--line); padding:8px 10px; margin-bottom:8px}
+  .r-title{font-weight:bold; margin-bottom:4px}
+  .gain-list{display:flex; flex-direction:column; gap:4px}
+  .gain-item{display:flex; align-items:center; gap:6px}
+  .gain-item img{width:24px; height:24px}
+  .gain-up{color:var(--red); font-weight:bold}
+  .gain-down{color:var(--green); font-weight:bold}
+  .r-foot{padding:0 10px 12px; text-align:center}
+  /* ===== 结局屏 ===== */
+  #scr-ending{align-items:center; text-align:center; padding:14px 14px; overflow-y:auto}
+  #scr-ending .badge-img{width:64px; height:64px; margin:10px 0 6px}
+  #scr-ending h1{font-size:24px; line-height:30px; margin:6px 0 10px}
+  #scr-ending .ending-text{
+    background:var(--card); border:3px solid var(--line); padding:10px 12px;
+    text-align:left; line-height:20px; margin-bottom:10px; max-width:320px;
+  }
+  #scr-ending .final-stats{color:var(--muted); margin-bottom:12px; line-height:20px}
+#scr-ending .promo-check{
+  background:var(--paper2); border:2px solid var(--line); padding:6px 8px;
+  margin-bottom:10px; font-size:12px; line-height:18px; text-align:center; color:var(--ink);
+}
+  #scr-ending .pbtn{width:180px}
+  /* ===== 结局收集册 ===== */
+  #scr-endings{align-items:stretch; text-align:left; padding:14px 12px; overflow-y:auto}
+  #scr-endings .endings-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px}
+  #scr-endings .endings-head h1{font-size:18px; letter-spacing:2px; color:var(--ink)}
+  #scr-endings .endings-count{font-size:12px; color:var(--red); font-weight:bold}
+  #scr-endings .endings-grid{display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between}
+  #scr-endings .ending-card{
+    width:calc(50% - 5px); box-sizing:border-box;
+    background:var(--card); border:2px solid var(--line); padding:8px 9px; margin-bottom:2px;
+  }
+  #scr-endings .ec-top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
+  #scr-endings .ec-badge{width:40px; height:40px; image-rendering:pixelated}
+  #scr-endings .ec-hero{width:40px; height:40px; image-rendering:pixelated; border:2px solid var(--line); background:var(--paper2)}
+  #scr-endings .ec-group{font-size:9px; color:var(--muted); line-height:12px; margin-bottom:2px}
+  #scr-endings .ec-title{font-size:12px; font-weight:bold; color:var(--ink); line-height:15px; margin-bottom:5px}
+  #scr-endings .ec-body{font-size:11px; line-height:16px; color:var(--muted)}
+  #scr-endings .ec-hint{display:inline-block; background:var(--red); color:#fff; font-size:9px; padding:1px 5px; margin-bottom:4px}
+  #scr-endings .ec-cond{color:var(--muted)}
+  #scr-endings .ending-card.locked{opacity:.95}
+  #scr-endings .ending-card.locked .ec-badge,
+  #scr-endings .ending-card.locked .ec-hero{filter:grayscale(1) brightness(.9); opacity:.6}
+  #scr-endings .ending-card.locked .ec-title{color:var(--muted)}
+  #scr-endings .pbtn{margin-top:14px; align-self:center}
+  /* ===== 颁奖典礼界面（每个升职节点）===== */
+  #scr-award{align-items:center; justify-content:center; text-align:center; overflow:hidden; position:relative;
+    background:radial-gradient(circle at 50% 36%, #fff7e2 0%, var(--paper) 58%, var(--paper2) 100%)}
+  #scr-award .award-fx{position:absolute; inset:0; pointer-events:none; overflow:hidden}
+  #scr-award .confetti{position:absolute; top:-14px; width:8px; height:8px;
+    animation-name:confetti-fall; animation-timing-function:linear; animation-fill-mode:forwards}
+  @keyframes confetti-fall{0%{transform:translateY(-14px) rotate(0); opacity:1}
+    100%{transform:translateY(660px) rotate(360deg); opacity:.15}}
+  #scr-award .award-card{position:relative; z-index:1; display:flex; flex-direction:column;
+    align-items:center; padding:8px 16px}
+  #scr-award .award-kicker{color:var(--gold-d); font-size:12px; letter-spacing:6px; margin-bottom:8px}
+  #scr-award .award-badge{width:96px; height:96px; margin:2px 0 10px;
+    animation:badge-pop .5s ease-out, badge-glow 2.2s ease-in-out infinite .55s}
+  @keyframes badge-pop{0%{transform:scale(.2); opacity:0}60%{transform:scale(1.18)}100%{transform:scale(1); opacity:1}}
+  @keyframes badge-glow{0%,100%{filter:drop-shadow(0 0 0 rgba(255,203,71,0))}
+    50%{filter:drop-shadow(0 0 12px rgba(255,203,71,.95))}}
+  #scr-award .award-title{font-size:21px; line-height:27px; color:var(--red); margin:2px 0 8px; letter-spacing:2px}
+  #scr-award .award-hero{width:96px; height:96px; border:3px solid var(--line); background:var(--paper2); margin-bottom:8px}
+  #scr-award .award-text{color:var(--ink); line-height:19px; margin-bottom:14px; max-width:300px; text-align:center}
+  #scr-award .award-btn{width:200px}
+  /* 滚动条像素化 */
+  ::-webkit-scrollbar{width:8px}
+  ::-webkit-scrollbar-track{background:var(--paper2)}
+  ::-webkit-scrollbar-thumb{background:var(--line); border:2px solid var(--paper2)}
+  /* 宽屏时手机居中即可（响应式容器后续再加侧面板） */
+  @media (max-width:430px){
+    body{align-items:flex-start}
+    .phone{width:100vw; height:100vh; border-radius:0; padding:0; box-shadow:none}
+    .phone::before{display:none}
+    .screen{width:100%; height:100%; border:none; border-radius:0}
+  }
+
+  /* ===== 宽屏辅助面板（>900px 才出现；手机/平板内容区保持原生尺寸，绝不放大） ===== */
+  .stage{display:flex; align-items:center; justify-content:center; gap:18px}
+  .side-panel{
+    display:none; width:246px; max-height:700px; align-self:stretch;
+    background:#241f1b; border:3px solid #3a2e2a; border-radius:14px; padding:12px;
+    color:var(--paper); flex-direction:column; overflow:hidden;
+  }
+  .side-panel .sp-head{
+    font-size:12px; letter-spacing:3px; color:var(--gold);
+    border-bottom:2px solid #3a2e2a; padding-bottom:6px; margin-bottom:8px; flex:none;
+  }
+  .side-panel .sp-body{flex:1; min-height:0; overflow-y:auto}
+  .side-panel .sp-note{
+    font-size:10px; line-height:14px; color:#b8a89a; margin-top:8px;
+    border-top:2px solid #3a2e2a; padding-top:6px; flex:none;
+  }
+  /* 左：属性常驻（竖向列表，永远显示当前 8 项数值） */
+  .side-attr{display:flex; align-items:center; gap:8px; padding:5px 4px; border-bottom:1px dashed #3a2e2a}
+  .side-attr img{width:28px; height:28px; flex:none}
+  .side-attr .sa-tx{min-width:0; flex:1}
+  .side-attr .sa-nm{font-size:10px; line-height:13px; color:#b8a89a}
+  .side-attr .sa-vl{font-size:14px; line-height:17px; font-weight:bold; color:var(--paper)}
+  .side-attr.heart .sa-vl{color:var(--gold)}
+  /* 深底下的星级三态：已达成金色实心 / 接近中橙空心 / 未达成灰空心 */
+  .side-attr .star-meter .on{color:var(--gold)}
+  .side-attr .star-meter .near{color:#c98a2a}
+  .side-attr .star-meter .off{color:#5a4a40}
+  .side-attr.locked{opacity:.45}
+  .side-attr .lk{display:inline-block; margin-left:3px; padding:0 2px; background:#6b5b50; color:#fff; font-size:8px; line-height:11px; vertical-align:middle}
+  /* 右：章节进度 */
+  .chap-step{display:flex; gap:8px; align-items:flex-start; padding:6px 0 6px 10px; margin-left:4px; border-left:3px solid #3a2e2a}
+  .chap-step .cs-dot{width:12px; height:12px; border-radius:50%; background:#3a2e2a; margin-top:3px; flex:none}
+  .chap-step.done .cs-dot{background:var(--gold)}
+  .chap-step.cur .cs-dot{background:var(--red); box-shadow:0 0 0 3px rgba(232,80,58,.35)}
+  .chap-step .cs-tx .cs-nm{font-size:12px; line-height:16px; color:var(--paper); font-weight:bold}
+  .chap-step.cur .cs-nm{color:#fff}
+  .chap-step .cs-sub{font-size:10px; line-height:14px; color:#9c8c7e}
+  .chap-now{margin-top:10px; padding-top:8px; border-top:2px solid #3a2e2a; font-size:11px; line-height:16px; color:var(--paper)}
+  .chap-now b{color:var(--gold)}
+  /* 2× 缩放开关 */
+  .zoom-toggle{
+    display:none; position:fixed; top:12px; right:12px; z-index:50;
+    font-family:inherit; font-size:11px; cursor:pointer; color:var(--paper);
+    background:#3a2e2a; border:2px solid #5a4a42; border-radius:6px; padding:6px 10px;
+  }
+  .zoom-toggle.on{background:var(--red); color:#fff; border-color:var(--red-d)}
+  .phone.zoom2{zoom:2}
+  @media (min-width:900px){
+    .side-panel{display:flex}
+    .zoom-toggle{display:block}
+  }
+</style>
+</head>
+<body data-page-node-id="bJ2XAG2BE8uCs8fcGlfQA9">
+<div class="stage">
+  <aside class="side-panel side-left">
+    <div class="sp-head">属性面板</div>
+    <div class="sp-body" id="side-hud"></div>
+    <div class="sp-note" id="side-lock"></div>
+  </aside>
+<div class="phone" data-page-node-id="MgrDxZOyyq5lriyeLL1OMu">
+  <div class="screen" data-page-node-id="5IwJnrfa8IAe5ggZjsG9dj">
+    <div class="statusbar" data-page-node-id="jVEhsOEnWMLcvWRX9H1ncZ">
+      <span id="clock" data-page-node-id="VT6MOVomHiCTK1jZ4WxHT4">09:00</span>
+      <span class="sicons" data-page-node-id="UmXqcfSj9PfaknYMfZmrgx">
+        <button class="menu-btn" id="menu-btn" onclick="openMenu()" title="菜单" aria-label="打开菜单">
+          <img src="assets/img/icons/icon_menu.png" alt="">
+        </button>
+        <button class="bgm-btn" id="bgm-toggle" onclick="toggleBgm()" title="背景音乐 开 / 关" aria-label="背景音乐开关">
+          <img src="assets/img/icons/icon_sound.png" alt="" id="bgm-icon">
+          <span class="bgm-wave" id="bgm-wave"></span>
+        </button>
+        <button class="sfx-btn" id="sfx-toggle" onclick="toggleSfx()" title="音效 开 / 关" aria-label="音效开关">
+          <img src="assets/img/icons/icon_voice.png" alt="">
+        </button>
+        <img src="assets/img/icons/icon_signal.png" alt="信号" data-page-node-id="5YIernZvzYLPxHAMDJDo8a">
+        <img src="assets/img/icons/icon_wifi.png" alt="WiFi" data-page-node-id="0qlGEiIGOudIE26F0Tdl1T">
+        <img src="assets/img/icons/icon_battery.png" alt="电量" data-page-node-id="oVkIi0DHiwBGqr0CW1vX8A">
+      </span>
+    </div>
+
+    <!-- 屏 1：封面 -->
+    <section class="page active" id="scr-cover" data-page-node-id="4oBTGZnA5j3vkbMXex45Cz">
+      <img class="cover-img" src="assets/img/scenes/s5_cover.png" width="320" height="240" alt="清晨的小区，一位红马甲志愿者走向居民楼" data-page-node-id="hmeA9ANED27WmCmh3aq3CM">
+      <h1 data-page-node-id="5IlKy0DPSGooUBuP7Yrs7i">青年楼长成长记</h1>
+      <div class="sub" data-page-node-id="0Mlykm7j2t92c0T0LRE0ZT">像素互动叙事 · 社区志愿者成长</div>
+      <div class="stage-line" data-page-node-id="mFVG8OZqA2BnnIG22YthD4">普通志愿者 → 小队长 → 副队长 / 总队长</div>
+      <button class="pbtn" id="btn-start" onclick="goCreate()" data-page-node-id="pieFqE9NP3HHBjPPFDMxT9">开始游戏</button>
+      <button class="pbtn blue" id="btn-resume" style="display:none; margin-top:10px" onclick="resumeGame()">继续上次进度</button>
+      <button class="pbtn ghost" id="btn-restart" style="display:none; margin-top:10px" onclick="askRestart()">重新开始</button>
+      <button class="pbtn ghost" id="btn-endings" style="margin-top:10px" onclick="openEndings()">结局收集册</button>
+      <div class="hero-strip" data-page-node-id="tsHpzvsgk1UozkwQOLeDvI">
+        <img src="assets/img/portraits/hero_v1.png" height="72" alt="主角 · 普通志愿者" data-page-node-id="cfBt56YFouvIpLLthnF7zN">
+        <span data-page-node-id="3DcfCLtzBjejUXBcPV45NN">从一天的网格值守开始</span>
+      </div>
+    </section>
+
+    <!-- 屏 2：创建楼长档案 -->
+    <section class="page" id="scr-create">
+      <h1>创建楼长档案</h1>
+      <div class="lead">填写信息，开启你的社区服务之旅</div>
+      <img class="cover-banner" src="assets/img/scenes/s5_cover.png" alt="你将服务的社区">
+      <div class="profile-card">
+        <img src="assets/img/avatars/hero_v1.png" alt="楼长">
+        <div class="profile-fields">
+          <div class="fld">
+            <div class="lab"><i></i>昵称</div>
+            <input class="pix-input" id="p-name" type="text" maxlength="8" value="小楼" placeholder="给自己取个名字吧">
+          </div>
+          <div class="fld">
+            <div class="lab"><i></i>年级</div>
+            <div class="chips" id="p-grade"></div>
+          </div>
+        </div>
+      </div>
+      <div class="mentor-card">
+        <img src="assets/img/avatars/jin.png" alt="金老师">
+        <div>
+          <div class="mc-name">金老师 · 社区督导</div>
+          <div class="mc-text">楼长之路从现在开始，社区里的事，我们一起扛。</div>
+        </div>
+      </div>
+      <div class="fld" style="width:100%">
+        <div class="lab"><i></i>专业</div>
+        <div class="chips" id="p-major"></div>
+      </div>
+      <div class="fld" id="p-start-wrap" style="width:100%; display:none">
+        <div class="lab"><i></i>起点（已解锁速通）</div>
+        <div class="chips" id="p-start"></div>
+      </div>
+      <div class="bonus" id="p-bonus"></div>
+      <div class="badge-row">
+        <span class="bd-lab">成长解锁徽章</span>
+        <div class="bds">
+          <img src="assets/img/badges/badge_1.png" alt="徽章1">
+          <img src="assets/img/badges/badge_2.png" alt="徽章2">
+          <img src="assets/img/badges/badge_3.png" alt="徽章3">
+          <img src="assets/img/badges/badge_4.png" alt="徽章4">
+        </div>
+      </div>
+      <button class="pbtn" onclick="confirmProfile()">成为楼长，出发！</button>
+      <button class="chip" style="margin-top:10px" onclick="show('scr-cover')">← 返回</button>
+    </section>
+
+    <!-- 屏 3：剧情 -->
+    <section class="page" id="scr-story" data-page-node-id="2Ai9v8aoqZBDotYLBUIYBJ">
+      <div class="arch-bar"><span class="nm" id="a-name">小楼</span><span id="a-info">社会工作 · 大一</span></div>
+      <div class="hud" id="hud" data-page-node-id="lDIQj2Kxkm2inuZ0KrZfhL"></div>
+      <div class="lock-note" id="hud-lock"></div>
+      <div class="node-bar" id="s-nodebar">
+        <span class="node-tag" id="s-tag">日常循环</span>
+        <span class="node-trig" id="s-trigger"></span>
+        <span class="node-idx" id="s-idx"></span>
+      </div>
+      <div class="story-scroll" data-page-node-id="A9uhVEOoKBCVUKSiuME3Yq">
+        <div class="danger-bar" id="s-danger">高危事件：处置结果直接计入晋升考核，选择不可撤销</div>
+        <div class="node-title" id="s-title"></div>
+        <div class="scene-frame">
+          <img id="s-scene" src="assets/img/scenes/s1_groupchat.png" width="320" height="240" alt="场景">
+        </div>
+        <div class="read-panel" id="s-readpanel">
+          <div class="narration" id="s-narration">
+            <img class="nar-face" id="s-narface" src="assets/img/avatars/hero_v1.png" alt="当事人">
+            <div class="nar-body">
+              <span class="nar-tag" id="s-nartag">当前处境</span>
+              <div class="nar-text" id="s-desc"></div>
+            </div>
+          </div>
+          <div class="thought-inline" id="s-thought">
+            <img class="ti-face" id="s-thface" src="assets/img/avatars/hero_v1.png" alt="我">
+            <div class="tdots"><i></i><i></i><i></i></div>
+            <div class="tbubble">
+              <span class="t-tag" id="s-thinktag">小楼的内心</span>
+              <div id="s-mono"></div>
+            </div>
+          </div>
+          <div class="continue-hint" id="s-continue" onclick="advanceReading()">▼ 点击继续</div>
+        </div>
+        <div class="opts" id="s-opts" data-page-node-id="yMKnKHS1oqlKfDuyZmpUTG"></div>
+        <div class="scroll-hint" id="s-scrollhint">▲ 上滑查看更多</div>
+      </div>
+    </section>
+
+    <!-- 屏 3：选择结算 -->
+    <section class="page" id="scr-result" data-page-node-id="QnuXttaDC18O9Hnp8PHrHw">
+      <div class="result-scroll" id="r-body" data-page-node-id="oR3jGwuGy8lbHOJ5i3XBT9"></div>
+      <div class="r-foot" data-page-node-id="A1ZklDHyL3r4zU6wPsvAfT"><button class="pbtn blue" id="r-next" onclick="nextNode()" data-page-node-id="TDRzpIBV8SueNWcsi8xlt9">继续 →</button></div>
+    </section>
+
+    <!-- 屏 4：结局 -->
+    <section class="page" id="scr-ending" data-page-node-id="ZLz7z9XgEMwDqZX1ayzLHh">
+      <img class="badge-img" id="e-badge" src="assets/img/badges/badge_1.png" alt="徽章" data-page-node-id="sDH3s0jMFdqOqh5uBRM9cv">
+      <img id="e-hero" src="assets/img/portraits/hero_v1.png" height="96" alt="主角" data-page-node-id="s40TQBcRZM5UEZzNURl9ow">
+      <h1 id="e-title" data-page-node-id="pDgxmhjqJPZCff17vlePHe"></h1>
+      <div class="ending-text" id="e-text" data-page-node-id="FwmDE9hfEfD8aQbvGQ9irX"></div>
+      <div class="promo-check" id="e-check"></div>
+      <div class="final-stats" id="e-stats" data-page-node-id="RnSvmx8yr62ivlwmwsb5Nk"></div>
+      <button class="pbtn" onclick="doRestart()" data-page-node-id="SeIYXS1wXzgWEUna5fvCYg">重新开始</button>
+      <button class="pbtn ghost" style="margin-top:10px" onclick="openEndings()">查看结局收集册</button>
+      <button class="pbtn ghost" id="btn-switch" style="margin-top:10px; display:none">换个岗位再来一次</button>
+    </section>
+
+    <!-- 屏 5：结局收集册 -->
+    <section class="page" id="scr-endings">
+      <div class="endings-head">
+        <h1>结局收集册</h1>
+        <div class="endings-count" id="endings-count">已解锁 0 / 6</div>
+      </div>
+      <div class="endings-grid" id="endings-grid"></div>
+      <button class="pbtn ghost" onclick="show('scr-cover'); updateCoverButtons()">← 返回封面</button>
+    </section>
+
+    <!-- 颁奖典礼界面（每个升职节点：就任小队长 / 副队长 / 总队长） -->
+    <section class="page" id="scr-award">
+      <div class="award-fx" id="a-fx"></div>
+      <div class="award-card">
+        <div class="award-kicker" id="a-kicker">晋 升 典 礼</div>
+        <img class="award-badge" id="a-badge" src="assets/img/badges/badge_2.png" alt="徽章" width="96" height="96">
+        <h1 class="award-title" id="a-title"></h1>
+        <img class="award-hero" id="a-hero" src="assets/img/portraits/hero_v2.png" alt="主角" width="96" height="96">
+        <div class="award-text" id="a-text"></div>
+        <button class="pbtn award-btn" onclick="afterAward()">走马上任 →</button>
+      </div>
+    </section>
+
+    <!-- 弹层：状态栏「菜单」进入；「重新开始」二次确认复用 -->
+    <div class="modal-mask" id="modal-mask">
+      <div class="modal-box">
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-text" id="modal-text"></div>
+        <div class="modal-btns" id="modal-btns"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<aside class="side-panel side-right">
+  <div class="sp-head">成长进度</div>
+  <div class="sp-body" id="side-progress"></div>
+</aside>
+</div>
+<button class="zoom-toggle" id="zoom-toggle" onclick="toggleZoom()">2× 放大</button>
+
+<script>
+// ===== 属性体系（8 项）=====
+// hidden  = 公益初心，全程只显示星级，晋升小队长那一刻第一次亮出数值
+// locked  = 统筹规划 / 组织协调 / 对外联络，管理岗属性，晋升小队长后才启用
+const ATTR = [
+  {key:"minrui",  name:"信息敏锐", icon:"icon_info"},
+  {key:"juece",   name:"决策判断", icon:"icon_judge"},
+  {key:"goutong", name:"沟通表达", icon:"icon_comm"},
+  {key:"xinren",  name:"居民信任", icon:"icon_trust"},
+  {key:"tongchou",name:"统筹规划", icon:"icon_plan",    locked:true},
+  {key:"xietiao", name:"组织协调", icon:"icon_org",     locked:true},
+  {key:"duiwai",  name:"对外联络", icon:"icon_liaison", locked:true},
+  {key:"gongyi",  name:"公益初心", icon:"icon_seed", hidden:true},
+];
+const LOCK_NAMES = ATTR.filter(a => a.locked).map(a => a.name).join(" / ");
+let state = {};
+ATTR.forEach(a => state[a.key] = a.hidden ? 0 : 2);
+// 清掉上一周目残留属性，开新档时回到干净基线
+function resetState(){ ATTR.forEach(a => state[a.key] = a.hidden ? 0 : 2); }
+// 是否已晋升小队长（决定三项管理属性是否启用）
+let promoted = false;
+// 当前 HUD 可见的属性
+function visibleAttr(){
+  return ATTR.filter(a => promoted || !a.locked);
+}
+
+// ===== 公益初心星级换算 =====
+// 星级语义：★ 起步 / ★★ 渐入状态 / ★★★ 达到晋升线(8) / ★★★★ 超出预期 / ★★★★★ 顶尖
+// 阈值按四章公益初心总量定（志愿者章上限 12，小队长章累至 21，副队线 28 / 总队线 30）
+const STAR_TIERS = [3, 8, 15, 24];   // 达到即升 2★ / 3★ / 4★ / 5★
+function starsOf(v){
+  let s = 1;
+  for (const t of STAR_TIERS) if (v >= t) s++;
+  return Math.min(5, s);
+}
+// 五格星条：实心 = 已达档位；空心红 = 正在接近下一档；空心灰 = 远未达成
+// （字体无半星字符半星，改用「实心 / 空心红 / 空心灰」三态，形态差异比深浅色更易辨认）
+function starMark(v){
+  const s = starsOf(v);
+  const next = STAR_TIERS[s - 1];                      // 升到下一颗星的门槛（s=5 时无）
+  const prev = s === 1 ? 0 : STAR_TIERS[s - 2];
+  const near = next !== undefined && v >= prev + Math.ceil((next - prev) / 2);
+  let html = "";
+  for (let i = 1; i <= 5; i++){
+    if (i <= s) html += `<span class="on">★</span>`;
+    else if (i === s + 1 && near) html += `<span class="near">☆</span>`;
+    else html += `<span class="off">☆</span>`;
+  }
+  return `<span class="star-meter" title="公益初心 ${s} / 5 级">${html}</span>`;
+}
+
+// ===== 节点类型（沿用 青春楼.html 的四类节点划分）=====
+const NODE_TYPE = {
+  daily:         {label:"日常循环",     trig:"每日登录自动触发"},
+  monthly:       {label:"月度随机",     trig:"月度任务随机触发"},
+  interpersonal: {label:"人际互动",     trig:"人际场景随机触发"},
+  special:       {label:"高危特殊事件", trig:"高危事件，阶段必现"},
+  deputy:        {label:"副队长·内务",  trig:"副队长履职 · 随机触发"},
+  director:      {label:"总队长·全局",  trig:"总队长履职 · 随机触发"},
+};
+const TYPE_ORDER = ["daily", "monthly", "interpersonal", "special", "deputy", "director"];
+
+// 处境里的当事人头像 → 称呼（内心气泡云固定用主角头像，念头永远是主角的）
+const FACE_NAME = {
+  jin:"金老师", xiaodui:"小队长", zuyuan:"组员", wanggeyuan:"网格员",
+  zhangshu:"张叔叔", liayi:"李阿姨", nainai:"老奶奶", chenlaoshi:"陈老师",
+  resident_f:"女居民", resident_m:"男居民",
+};
+
+// ===== 志愿者阶段剧情池（12 条，文案取自 青春楼.html VOLUNTEER_POOL）=====
+const VOLUNTEER_POOL = [
+  { id:"v1", title:"每日网格舆情值守", type:"daily", scene:"s1_groupchat", face:"hero_v1",
+    desc:"专业课作业堆成山，蹲守网格群两小时完全是浪费时间……",
+    inner:"做志愿本来就只是凑综测时长，随便划两下，在小队长群回一句「已转发」交差就行，小队长不会逐条核对内容。",
+    opts:[
+      { t:"逐条翻阅群内聊天记录，标记虚假保健品广告、不实外部链接、独居老人求助信息，截图留存风险内容上报小队长，转发完在小队长群回复「已转发」",
+        gain:{minrui:2,gongyi:1}, growth:"筛查消息时发现一条宣称能根治慢性病的虚假广告并及时拦截，突然意识到一次敷衍的值守，很可能让不知情的老年人上当受骗。",
+        review:"上报内容完整规范，各类风险信息标注清晰，日常值守态度认真负责。",
+        promo:"长期坚持细致完成值守，舆情处理准确率稳步提升，是晋升小队长核心硬性考核项。" },
+      { t:"快速滑动跳过所有聊天内容，看都没看就在小队长群回一句「已转发」交差，不标记任何可疑信息",
+        gain:{gongyi:-1}, growth:"能节省一点课余时间就多省一点，就算后续出现问题，责任也不会追究到普通志愿者身上。",
+        review:"只回一句「已转发」，全无风险标注，存在大量信息漏查隐患，需要重新整改上报。",
+        promo:"频繁敷衍值守会留下值守报备不合格记录，舆情处理考核扣分，累计多次将直接丧失小队长晋升资格。" },
+    ]},
+  { id:"v2", title:"每周轮值搜集科普素材", type:"daily", scene:"s1_groupchat", face:"hero_v1",
+    desc:"搜集科普素材还要核对官方发布来源，过程太过麻烦……",
+    inner:"随便从网上复制两篇养生短文上交，凑够任务数量就算完成工作。",
+    opts:[
+      { t:"从官方公众号筛选反诈、辟谣内容，精简改写后标注来源上交小队长",
+        gain:{minrui:1,goutong:1}, growth:"整理素材过程中弄懂十多种专门针对老年人的诈骗套路，不仅可以发在网格群科普，也学会提醒家中长辈提高防范意识。",
+        review:"科普素材来源权威、内容通俗适配居民，改写后的转发文案可直接用于网格推送。",
+        promo:"持续精细筛选素材，月度汇报内容质量更高，满足汇报质量优异晋升加分条件。" },
+      { t:"直接搬运自媒体文章，不核对来源、不精简文案",
+        gain:{}, growth:"只需要完成分配给自己的基础任务，没必要额外花费时间优化内容。",
+        review:"素材来源不明，存在误导居民的风险，驳回要求重新搜集合规内容。",
+        promo:"多次上交不合格素材，月度汇报扣分，小队整体绩效评级下降，不利于后续晋升考核。" },
+    ]},
+  { id:"v3", title:"社区线下公益物资整理", type:"daily", scene:"s3_corridor", face:"nainai",
+    desc:"整理捐赠物资需要搬运箱子、分类登记物品，又累又消耗时间……",
+    inner:"不去参与也不会扣除志愿时长，留在宿舍复习专业课性价比更高。",
+    opts:[
+      { t:"准时前往社区，分类规整物资，陪同独居老人登记领取",
+        gain:{gongyi:2,goutong:1}, growth:"亲眼见到独居老奶奶领到保暖物资后连连道谢，第一次真切感受到线下服务的实际价值，不再只盯着志愿加分。",
+        review:"主动参与线下物资整理，与居民互动亲切自然，展现了志愿者的温度。",
+        promo:"丰富线下实践履历，考核时小队整体绩效突出维度加分，拉开与其他组员差距。" },
+      { t:"以课业繁重为理由，直接拒绝本次活动",
+        gain:{}, growth:"线下志愿投入时间多、加分少，不如把空余时间用来提升绩点。",
+        review:"线下实践履历空白，晋升评审时缺少实践支撑，综合评分偏低。",
+        promo:"线下实践履历空白，晋升评审时缺少实践支撑，综合评分偏低。" },
+    ]},
+  { id:"v4", title:"轮值转发科普内容", type:"daily", scene:"s1_groupchat", face:"hero_v1",
+    desc:"现在时间还不算太晚，顺手把科普消息发完就能结束当日任务……",
+    inner:"特意留存到明天还要额外记挂，没必要在意居民休息时间。",
+    opts:[
+      { t:"将内容保存至草稿箱，约定次日上午 9 点统一推送",
+        gain:{goutong:1,gongyi:1}, growth:"科普的初衷是为居民提供帮助，深夜刷屏打扰居民休息只会引发反感，把握服务分寸也是志愿者的必修课。",
+        review:"主动规避扰民推送时段，充分考虑居民感受，值得队内其他组员学习。",
+        promo:"长期规范推送不扰民，居民评价维度保持良好，晋升硬性条件达标。" },
+      { t:"当晚直接批量转发多条科普消息",
+        gain:{gongyi:-1}, growth:"消息越早发完越早结束任务，居民看不看消息是他们自己的选择。",
+        review:"多条消息深夜集中推送，已有多名居民反馈被消息提示音打扰休息。",
+        promo:"多次深夜推送引发居民反感，居民评价指标下滑，属于晋升扣分项，严重时一票否决。" },
+    ]},
+  { id:"v5", title:"组员上报群内居民诉求", type:"daily", scene:"s1_groupchat", face:"zuyuan",
+    desc:"同组志愿者私聊发送网格群居民诉求截图……",
+    inner:"直接把截图转发给小队长即可，我的本职只是传递信息，没必要多花时间询问诉求完整细节。",
+    opts:[
+      { t:"私聊组员询问诉求背景、联系方式，整理处置建议后统一上报",
+        gain:{juece:1,goutong:1}, growth:"单纯转发截图会让上级无法掌握完整情况，梳理完整信息才能快速协助居民解决问题，处理事务要有始有终。",
+        review:"居民诉求信息整理完整，附带处置思路，大幅减轻小队汇总工作压力。",
+        promo:"养成闭环处置习惯，舆情处置能力评分提升，是小队长选拔重点考察能力。" },
+      { t:"原图不加任何文字补充，直接转发给小队长",
+        gain:{}, growth:"信息传递出去，我的工作就已经完成，后续处置流程与我无关。",
+        review:"信息传递不完整，缺乏闭环处置意识，决策判断力成长缓慢。",
+        promo:"长期只做简单信息传递，缺乏闭环处置意识，决策判断力成长缓慢，晋升竞争力弱。" },
+    ]},
+  { id:"v6", title:"线下社区公益宣讲招募", type:"monthly", scene:"s2_square", face:"hero_v1",
+    desc:"报名宣讲需要撰写演讲稿、制作PPT、到场彩排，占用大量课余时间……",
+    inner:"一场小型宣讲能拿到的加分很少，投入产出不成正比。",
+    opts:[
+      { t:"主动报名宣讲，撰写反诈讲稿，提前前往社区彩排演练",
+        gain:{gongyi:2,juece:1,goutong:1}, growth:"宣讲结束后多位老人主动拉住我询问防骗细节，这一刻明白宣讲不只是打卡凑时长，而是实实在在为老年人筑牢防骗防线。",
+        review:"自主策划线下宣讲属于创新实践案例，晋升评审创新提案板块大幅加分。",
+        promo:"自主策划线下宣讲属于创新实践案例，晋升评审创新提案板块大幅加分。" },
+      { t:"忽略宣讲招募通知，不参与任何筹备工作",
+        gain:{}, growth:"短期看不到可观加分，没必要牺牲自己的课余休息时间。",
+        review:"无大型线下活动经历，统筹规划能力得不到锻炼，综合领导力考核得分偏低。",
+        promo:"无大型线下活动经历，统筹规划能力得不到锻炼，综合领导力考核得分偏低。" },
+    ]},
+  { id:"v7", title:"小队长分享科普工作技巧", type:"monthly", scene:"s1_groupchat", face:"xiaodui",
+    desc:"小队长在小组群转发金老师的科普工作思路、谣言甄别实操技巧……",
+    inner:"我只需要按时完成科普转发基础任务，甄别技巧不学也不影响达标，花费时间阅读文档纯属多余。",
+    opts:[
+      { t:"完整阅读工作思路文档，摘抄技巧并分享感悟",
+        gain:{minrui:2,goutong:1,gongyi:1}, growth:"机械转发只是最低工作标准，学会甄别信息、读懂科普背后的服务意义，才算真正做好志愿服务。",
+        review:"主动吸收工作方法，还能带动队内其他组员共同学习进步。",
+        promo:"主动带教组员对应团队管理表现优异考核项，是晋升副队长核心加分点。" },
+      { t:"直接划过消息，不阅读不学习",
+        gain:{}, growth:"基础任务能够完成即可，进阶工作技巧不需要刻意钻研。",
+        review:"自身甄别能力停滞，也无法带动组员成长，团队管理维度考核无优势。",
+        promo:"自身甄别能力停滞，也无法带动组员成长，团队管理维度考核无优势。" },
+    ]},
+  { id:"v8", title:"新入群的居民问：你们是谁", type:"interpersonal", scene:"s1_groupchat", face:"resident_f",
+    desc:"网格群有新居民加入，对方发问：这群里怎么还有大学生？",
+    inner:"大家好我是XX大学志愿者——这样说是不是太官方了？要不要说得亲切一点？",
+    opts:[
+      { t:"认真介绍团队服务内容：您好！我们是XX大学「青春网格行动」的志愿者，平时会在群里转发官方科普和辟谣信息，帮助大家识别骗局、了解政策，不会刷屏打扰，请您放心",
+        gain:{goutong:2,xinren:1,gongyi:1}, growth:"你发现清清楚楚地告诉居民我们是干什么的，比闷头转发一百条消息都管用，信任是从自我介绍开始的。",
+        review:"自我定位清晰，居民后续互动意愿明显增强。",
+        promo:"能主动向居民阐明志愿者定位，体现沟通能力，晋升考核加分。" },
+      { t:"简单说一句我是志愿者就结束，不再多解释",
+        gain:{}, growth:"对方没再追问，但你隐约感觉他可能还是没搞懂你们是干嘛的。",
+        review:"新居民对团队服务内容不了解，后续可能产生误解，建议加强入群介绍环节。",
+        promo:"缺乏主动沟通意识，沟通表达力成长偏慢。" },
+    ]},
+  { id:"v9", title:"网格群出现虚假保健品推销", type:"special", scene:"s1_groupchat", face:"resident_m",
+    desc:"多名老年人追捧包治百病、拉人头返利的保健产品，推销话术在群内刷屏……",
+    inner:"举报骗局流程繁琐复杂，假装没看见能省去大量操作，就算老人受骗也不会追责普通志愿者。",
+    opts:[
+      { t:"完整截图留存证据，走完举报流程，上报小队长等待官方口径，监督组员温和提醒",
+        gain:{minrui:2,juece:1,gongyi:1}, growth:"主动拦截虚假营销话术是志愿者必须扛起的责任，因为怕麻烦放任不管，会辜负居民对青年楼长的信任。",
+        review:"风险识别及时，整套处置流程规范，严格遵守先上报、再推送提醒的工作要求。",
+        promo:"规范处置复杂营销舆情，舆情处理准确率达标，是晋升硬性过关条件。", specialPositive:true },
+      { t:"无视推销话术，不截图、不上报、不举报",
+        gain:{gongyi:-3}, growth:"多一事不如少一事，没必要消耗大量时间处理复杂举报流程。",
+        review:"违规处置舆情会被记入负面记录，舆情处理考核不达标。",
+        promo:"多次选择将永久失去晋升资格。", specialNegative:true },
+    ]},
+  { id:"v10", title:"网格群居民发生邻里矛盾争吵", type:"special", scene:"s1_groupchat", face:"zhangshu",
+    desc:"两名居民因噪音、公共区域使用问题在网格群争吵刷屏……",
+    inner:"邻里矛盾属于居民私人事务，我只是科普志愿者，介入调解容易引火烧身，安静旁观即可。",
+    opts:[
+      { t:"私聊双方安抚情绪，引导线下沟通，群内发布和睦提示，同步报备网格员",
+        gain:{goutong:3,juece:2}, growth:"网格群属于社区公共空间，持续争吵刷屏会影响全体居民，适度引导调解也是志愿服务的一部分。",
+        review:"具备群众矛盾调解能力，综合领导力考核高分，适配小队长管理职责。",
+        promo:"具备群众矛盾调解能力，综合领导力考核高分，适配小队长管理职责。", specialPositive:true },
+      { t:"全程沉默旁观，任由双方持续争吵",
+        gain:{gongyi:-1}, growth:"居民私事无需插手，避免给自己惹麻烦。",
+        review:"面对群众矛盾不作为，居民评价、综合领导力双项扣分。",
+        promo:"面对群众矛盾不作为，居民评价、综合领导力双项扣分，晋升难度大幅增加。", specialNegative:true },
+    ]},
+  { id:"v11", title:"网格群居民公开吐槽推送频繁", type:"monthly", scene:"s1_groupchat", face:"liayi",
+    desc:"居民@全体志愿者，质疑高频科普推送打扰日常生活。",
+    inner:"我们免费为居民科普反诈养生属于做好事，居民不理解也无所谓，照常完成每日推送任务不用理会。",
+    opts:[
+      { t:"暂时降低推送频次，群内温和说明服务初衷，收集居民可接受的推送时段",
+        gain:{goutong:2,juece:1,gongyi:1}, growth:"志愿服务不能自我感动，居民的真实感受才是评判服务质量的标准，学会变通才是成熟的志愿者。",
+        review:"妥善化解居民负面反馈，居民评价保持优良。",
+        promo:"化解居民负面反馈是晋升关键能力。" },
+      { t:"无视居民质疑，维持原有高频推送",
+        gain:{gongyi:-2}, growth:"科普工作问心无愧，居民是否接受与我无关。",
+        review:"激化居民不满，居民评价严重下滑。",
+        promo:"激化矛盾会导致晋升一票否决。" },
+    ]},
+  { id:"v12", title:"志愿者技能培训通知", type:"interpersonal", scene:"s4_meeting", face:"jin",
+    desc:"学院、社区组织志愿者舆情甄别、居民沟通技巧培训。",
+    inner:"培训占用一下午课余时间，学到的技巧短期内无法转化为加分，不如留在宿舍刷题提升绩点。",
+    opts:[
+      { t:"全程参与培训，记录技巧并分享笔记给组员",
+        gain:{minrui:2,goutong:1,gongyi:1}, growth:"培训学到的沟通技巧，后续化解居民质疑、识别网络谣言都能使用，自我提升不能只依靠综测加分。",
+        review:"主动学习并分享技能，团队管理、舆情处理双维度加分。",
+        promo:"主动学习体现自我驱动力，晋升考核加分。" },
+      { t:"以课业繁忙为由拒绝参加",
+        gain:{}, growth:"培训属于额外附加任务，不参加也不影响基础志愿时长达标。",
+        review:"缺乏专业技能培训经历，信息甄别、沟通能力提升缓慢。",
+        promo:"缺乏培训会导致能力成长缓慢，考核评分偏低。" },
+    ]},
+  ];
+
+  // ===== 小队长阶段剧情池（10 条，文案取自 青春楼长.html LEADER_POOL）=====
+  // 字段沿用 VOLUNTEER_POOL 结构；scene 取原「场景描述」文本，图片 key 单独映射；
+  // effects 驼峰属性 → ATTR 键（infoSensitivity→minrui / decisionMaking→juece /
+  // communication→goutong / residentTrust→xinren / publicWelfare→gongyi）；
+  // feedback→review，promotion→promo；高危节点 good/specialPositive、bad/specialNegative。
+  const LEADER_POOL = [
+    { id:"l1", title:"志愿活动，去还是不去？", type:"daily", typeLabel:"小队长管理", typeTrig:"管理履职 · 随机触发",
+      scene:"s1_groupchat", face:"jin",
+      desc:"小队长沟通群弹出金老师发布的线下志愿活动，时间段恰好在你没课的空档。",
+      inner:"加综测分、丰富简历的念头一闪而过，可去的话要自己掏车费，还得一个个问组员谁有空，到了现场还要拍照、组织。参加，真的划算吗？",
+      opts:[
+        { t:"主动报名并牵头组织",
+          gain:{juece:2,goutong:1,gongyi:1},
+          growth:"第一次组织活动，你从被通知的人变成了通知别人的人。",
+          review:"金老师督导：组织得不错。志愿活动不是去凑个人数，关键是让居民感受到我们是真心来服务的。",
+          promo:"积极组织活动提升团队绩效。" },
+        { t:"不参加，把时间留给自己",
+          gain:{},
+          growth:"你选择留在宿舍，但后来看到别的组发的活动照片，心里有一点空落落的。",
+          review:"金老师督导：机会是留给主动的人的。",
+          promo:"长期不参加线下活动，居民信任和团队绩效成长缓慢。", negative:true },
+      ]},
+    { id:"l2", title:"金老师转发的虚假信息，举报还是装没看见？", type:"special", typeLabel:"小队长管理", typeTrig:"高危事件 · 阶段必现",
+      scene:"s1_groupchat", face:"jin",
+      desc:"金老师在群转一条明显骗局文章，要求组织举报投诉。流程复杂。",
+      inner:"投诉这么麻烦，还要读完全文找它不实在哪，花这时间干嘛？又不是我发的。",
+      opts:[
+        { t:"花时间认真投诉",
+          gain:{minrui:2,juece:1,gongyi:1},
+          growth:"你开始理解青年楼长不只是转发正面科普，也要主动清除有害信息。",
+          review:"金老师督导：投诉流程是麻烦，但这是基本功。能较真、能甄别，才是合格的楼长。",
+          promo:"认真履职提升舆情处理能力。", specialPositive:true },
+        { t:"避而不见",
+          gain:{gongyi:-1},
+          growth:"你滑过了那条消息，但后来听说有居民真的点进去了，你心里不是滋味。",
+          review:"金老师督导：责任面前，没有人是旁观者。",
+          promo:"回避责任会损害居民信任。", specialNegative:true },
+      ]},
+    { id:"l3", title:"监督转发，逐群核实还是信已转发？", type:"daily", typeLabel:"小队长管理", typeTrig:"管理履职 · 随机触发",
+      scene:"s1_groupchat", face:"zuyuan",
+      desc:"你负责监督组员把科普信息转发到各自网格群。",
+      inner:"他们都在群里回了已转发，还用我一个个点开看吗？",
+      opts:[
+        { t:"逐群点开核实",
+          gain:{juece:1,goutong:1,xinren:1},
+          growth:"你明白说了不等于做了，真正的负责要看到结果。",
+          review:"金老师督导：监督要到位。居民不知道背后谁在盯，但漏发一次，信任就少一分。",
+          promo:"监督到位提升服务质量。" },
+        { t:"看到已转发就当完成",
+          gain:{xinren:-1},
+          growth:"你选择相信组员，但后来有居民抱怨没收到科普，你才意识到自己疏忽了。",
+          review:"金老师督导：信任不能替代核实。",
+          promo:"监督缺位会导致服务质量下降。", negative:true },
+      ]},
+    { id:"l4", title:"200人满群，小队长变转发志愿者？", type:"special", typeLabel:"小队长管理", typeTrig:"高危事件 · 阶段必现",
+      scene:"s1_groupchat", face:"hero_v1",
+      desc:"你对接的网格群已达200人上限，你是第200个入群者，没法再拉负责转发的志愿者进来。",
+      inner:"反正拉不进人了，这个群就先放着、不覆盖了吧？",
+      opts:[
+        { t:"主动承担这个群的转发",
+          gain:{goutong:1,gongyi:2,xinren:1},
+          growth:"你体会到责任不是看方便，而是看需要。",
+          review:"金老师督导：主动补位很好。网格无小事，一个群也是我们服务的阵地。",
+          promo:"主动承担提升团队覆盖率。", specialPositive:true },
+        { t:"不覆盖，放弃这个群",
+          gain:{gongyi:-1},
+          growth:"你选择了省事，但后来那个群里有人发了谣言，无人辟谣，你心里很愧疚。",
+          review:"金老师督导：每个群都是我们的责任田。",
+          promo:"放弃覆盖会导致居民信任流失。", specialNegative:true },
+      ]},
+    { id:"l5", title:"舆情上报，直接转发还是先了解闭环？", type:"special", typeLabel:"小队长管理", typeTrig:"高危事件 · 阶段必现",
+      scene:"s1_groupchat", face:"zuyuan",
+      desc:"组员上报一条出现在网格群里的舆情。",
+      inner:"转给金老师不就完了？还要我进群去问？",
+      opts:[
+        { t:"先了解再闭环处理",
+          gain:{juece:2,goutong:1,xinren:2,gongyi:1},
+          growth:"你体会到闭环二字的分量，对居民有始有终，才是真负责。",
+          review:"金老师督导：你这套先研判再答复的做法，正是我们想要的。复杂舆情就靠这个。",
+          promo:"独立闭环处理舆情是晋升核心能力。", specialPositive:true },
+        { t:"直接转发截图给金老师",
+          gain:{},
+          growth:"你只是做了一个传话筒，但居民的问题并没有得到及时解决。",
+          review:"金老师督导：小队长不是传声筒，要有自己的判断。",
+          promo:"缺乏闭环意识会阻碍晋升。", specialNegative:true },
+      ]},
+    { id:"l6", title:"组员深夜转发科普，你提醒还是不提醒？", type:"daily", typeLabel:"小队长管理", typeTrig:"管理履职 · 随机触发",
+      scene:"s1_groupchat", face:"zuyuan",
+      desc:"你发现一名组员在晚上10点半把科普消息转发到了网格群。",
+      inner:"都发了，再提醒他是不是小题大做？居民可能已经休息了。",
+      opts:[
+        { t:"私下提醒组员注意推送时间",
+          gain:{goutong:1,xinren:1,gongyi:1},
+          growth:"你学会对事不对人地提醒，既保护居民休息，也帮助组员成长。",
+          review:"组员表示理解，后续调整了推送时间，居民反馈变好。",
+          promo:"有效管理团队行为，提升居民评价。" },
+        { t:"不提醒，觉得无所谓",
+          gain:{xinren:-1},
+          growth:"你选择沉默，但后来有居民在群里抱怨深夜消息打扰休息。",
+          review:"居民投诉深夜扰民，你的管理疏忽被金老师指出。",
+          promo:"长期忽视细节会损害团队形象。", negative:true },
+      ]},
+    { id:"l7", title:"自运转周，提前规划还是临时抱佛脚？", type:"daily", typeLabel:"小队长管理", typeTrig:"管理履职 · 随机触发",
+      scene:"s4_meeting", face:"hero_v1",
+      desc:"轮到你带领的小组实行自运转这一周，你需要安排组员搜集、审核、转发科普。",
+      inner:"反正最后把信息转发下去就行，早通知晚通知，有区别吗？",
+      opts:[
+        { t:"提前制定详细分工表，明确搜集日、审核日和固定转发时间",
+          gain:{juece:1,goutong:1,xinren:1},
+          growth:"你体会到规划不是束缚，而是给团队安全感。",
+          review:"自运转周流程顺畅，组员反馈轻松，金老师表扬了你们的组织。",
+          promo:"高效的自运转是优秀小队长的标志。" },
+        { t:"开始几天才匆匆通知，让大家临时准备",
+          gain:{xinren:-1},
+          growth:"你拖延了规划，导致组员手忙脚乱，素材质量下降。",
+          review:"自运转周出现多次漏发，居民质疑科普覆盖。",
+          promo:"缺乏规划会影响团队绩效和居民信任。", negative:true },
+      ]},
+    { id:"l8", title:"金老师新增临时统计任务，你如何应对？", type:"monthly", typeLabel:"小队长管理", typeTrig:"月度任务 · 随机触发",
+      scene:"s1_groupchat", face:"jin",
+      desc:"金老师在群里紧急通知，要求今天内统计所有网格群本周科普转发次数和居民互动情况。",
+      inner:"又要额外统计，好麻烦，直接转达给组员让他们自己填吧。",
+      opts:[
+        { t:"先自己设计简单统计表格，拆解任务，分发给组员并说明要点，最后汇总核对",
+          gain:{juece:1,minrui:1,gongyi:1},
+          growth:"你学会如何高效分解任务，减轻组员负担，同时保证数据准确。",
+          review:"统计工作按时完成，数据清晰，金老师表示满意。",
+          promo:"体现你的统筹能力和责任心。" },
+        { t:"直接转发金老师的消息，让组员自己看着办",
+          gain:{},
+          growth:"你转发了通知，但组员不清楚具体统计口径，提交的数据乱七八糟。",
+          review:"统计结果混乱，金老师要求重做，你被批评组织不力。",
+          promo:"缺乏分解和指导会导致团队低效。", negative:true },
+      ]},
+    { id:"l9", title:"跨组协作冲突协调", type:"interpersonal", typeLabel:"小队长管理", typeTrig:"人际互动 · 随机触发",
+      scene:"s3_corridor", face:"xiaodui",
+      desc:"你组和另一小组在同一个社区活动时出现分工重叠，双方组员产生摩擦。",
+      inner:"这是他们之间的问题，我管好自己组就行，没必要掺和。",
+      opts:[
+        { t:"主动联系对方小队长，协调分工，明确边界",
+          gain:{juece:1,goutong:2,gongyi:1},
+          growth:"你学会了跨组沟通，化解冲突的同时也建立了良好合作关系。",
+          review:"双方配合顺畅，活动圆满完成，金老师赞赏你的大局观。",
+          promo:"跨组协调能力是小队长晋升的重要加分项。" },
+        { t:"不干预，各自为政",
+          gain:{xinren:-1},
+          growth:"冲突导致活动现场混乱，居民体验下降。",
+          review:"金老师指出你缺乏协同意识。",
+          promo:"回避冲突会损害团队整体形象。", negative:true },
+      ]},
+    { id:"l10", title:"居民私信投诉科普内容不准确", type:"interpersonal", typeLabel:"小队长管理", typeTrig:"人际互动 · 随机触发",
+      scene:"s1_groupchat", face:"resident_f",
+      desc:"一位居民私信你，质疑昨天转发的科普文章有数据错误。",
+      inner:"科普内容都是审核过的，居民自己理解有问题，不用理会。",
+      opts:[
+        { t:"认真核实内容，发现确有瑕疵，立即更正并致歉",
+          gain:{goutong:2,xinren:2,gongyi:1},
+          growth:"你意识到权威不是靠遮掩，而是靠担当。及时纠错反而赢得更多信任。",
+          review:"居民表示满意，并在群里公开感谢你的负责。",
+          promo:"负责任的态度是管理者的基石。" },
+        { t:"无视投诉，坚持原文无误",
+          gain:{xinren:-2},
+          growth:"你固执己见，居民失望，随后在群里公开质疑团队专业性。",
+          review:"舆情发酵，金老师紧急介入处理。",
+          promo:"忽视居民反馈会严重损害信任。", negative:true },
+      ]},
+  ];
+
+// ===== 副队长章剧情池（8 条，取自 青春楼长.html DEPUTY_POOL，属性键已映射）=====
+const DEPUTY_POOL = [
+  { id:"d1", title:"月报收集：分阶段提醒还是临时催促？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
+    scene:"s1_groupchat", face:"xiaodui",
+    desc:"你担任副队长，负责统筹全队月报。各小队经常拖延，汇总出错率高。",
+    inner:"反正最后都能收齐，截止日当天催一下就行了吧？",
+    opts:[
+      { t:"截止前3天分批次提醒，建立进度清单", gain:{juece:2,goutong:1,gongyi:1},
+        growth:"你发现提前规划能有效避免混乱，组员也更有准备。",
+        review:"月报按时收齐，质量明显提升，金老师表扬了你的组织能力。",
+        promo:"高效的月报管理是副队长的核心职责。" },
+      { t:"仅在截止日当天群发催促", gain:{xinren:-1},
+        growth:"截止日当天大家手忙脚乱，月报错漏频发，你不得不熬夜修改。",
+        review:"金老师指出月报质量下滑，要求你改进工作方法。",
+        promo:"拖延管理会影响团队整体绩效。" },
+    ]},
+  { id:"d2", title:"月报校验：逐项核对还是粗略浏览？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
+    scene:"s4_meeting", face:"hero_v3",
+    desc:"各小队提交了月报，你需要汇总成一份全队报告。",
+    inner:"粗略看看没有大问题就直接汇总吧，省时间。",
+    opts:[
+      { t:"逐字段核对所有数据，退回修改后二次复核", gain:{minrui:2,juece:1,gongyi:1},
+        growth:"细致校验发现很多隐藏错误，你意识到精准数据对团队决策的重要性。",
+        review:"全队月报数据准确，金老师称赞你工作严谨。",
+        promo:"数据准确性是副队长的生命线。" },
+      { t:"粗略浏览无大面积空白就直接汇总", gain:{minrui:-1},
+        growth:"你省略了校验环节，结果月报出现多处矛盾数据，被金老师打回重做。",
+        review:"金老师批评你工作马虎，要求重新整理。",
+        promo:"数据失实会损害团队信誉。" },
+    ]},
+  { id:"d3", title:"优秀经验挖掘：主动筛选还是坐等提交？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
+    scene:"s4_meeting", face:"hero_v3",
+    desc:"你需要从各小队月报中提炼可推广的优秀做法。",
+    inner:"等各小队主动上报亮点吧，省得自己翻。",
+    opts:[
+      { t:"逐份查阅月报，提炼高效做法并整理成经验手册", gain:{minrui:1,juece:1,gongyi:1},
+        growth:"你发现了很多被忽略的金点子，整理成手册后全队受益。",
+        review:"经验手册下发后，各小队纷纷借鉴，整体效率提升。",
+        promo:"知识沉淀是副队长的重要贡献。" },
+      { t:"发通知等各小队自主提交，无素材则放弃", gain:{},
+        growth:"各小队响应寥寥，你也没有深入挖掘，团队经验无法传承。",
+        review:"金老师提醒你被动工作不利于团队成长。",
+        promo:"缺乏主动挖掘会浪费团队宝贵经验。" },
+    ]},
+  { id:"d4", title:"月报档案：分类存档还是杂乱堆放？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
+    scene:"s4_meeting", face:"hero_v3",
+    desc:"你需要整理历年月报档案，以便未来复盘。",
+    inner:"压缩打包存起来就行，以后要查再找。",
+    opts:[
+      { t:"按年份-月份-社区建立分层档案，制作检索目录", gain:{minrui:2,juece:1},
+        growth:"你建立了清晰的档案系统，后续复盘效率大幅提高。",
+        review:"金老师称赞你的档案管理，为团队留下了宝贵资料。",
+        promo:"规范的档案管理体现专业素养。" },
+      { t:"所有月报随意堆放，无分类无标注", gain:{minrui:-1},
+        growth:"档案混乱，后续查找历史数据时耗费了大量时间。",
+        review:"金老师批评你工作缺乏条理。",
+        promo:"档案混乱会影响团队长期发展。" },
+    ]},
+  { id:"d5", title:"月报异常数据：私下沟通还是公开批评？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
+    scene:"s1_groupchat", face:"xiaodui",
+    desc:"你发现某小队月报数据异常低，可能存在漏报或敷衍情况。",
+    inner:"直接在群里点名批评，让他们赶紧整改。",
+    opts:[
+      { t:"私下联系该小队长，了解困难，共同制定改进方案", gain:{goutong:2,gongyi:1,xinren:1},
+        growth:"你体会到管理需要温度，私下沟通更能解决问题。",
+        review:"小队长积极配合整改，下月数据明显改善。",
+        promo:"善于沟通的副队长更易获得团队信任。" },
+      { t:"群内公开点名批评，要求立即整改", gain:{xinren:-1},
+        growth:"公开批评让小队长感到难堪，团队气氛变得紧张。",
+        review:"金老师提醒你注意沟通方式。",
+        promo:"粗暴管理会损害团队凝聚力。" },
+    ]},
+  { id:"d6", title:"月报资料同步总队长：精简简报还是直接转发？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
+    scene:"s1_groupchat", face:"hero_v4",
+    desc:"你需要将全队月报资料同步给总队长，以便他进行全局统筹。",
+    inner:"直接把所有原始文件打包发过去就行，省事。",
+    opts:[
+      { t:"提炼核心数据和亮点问题，制作精简简报同步总队长", gain:{juece:1,goutong:1,gongyi:1},
+        growth:"你意识到信息筛选和提炼能大大提高协作效率。",
+        review:"总队长反馈简报清晰，节约了他的时间。",
+        promo:"高效的信息传递是平级协作的关键。" },
+      { t:"直接转发所有原始月报文件，不做任何梳理", gain:{},
+        growth:"总队长面对大量原始文件，筛选信息耗费了很多时间。",
+        review:"总队长建议你以后先做精简。",
+        promo:"缺乏提炼会增加协作成本。" },
+    ]},
+  { id:"d7", title:"新小队长月报带教", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
+    scene:"s4_meeting", face:"xiaodui",
+    desc:"新上任的小队长对月报填报流程不熟悉，多次出错。",
+    inner:"他自己应该多学习，我没必要手把手教。",
+    opts:[
+      { t:"整理填报指南和范例，一对一辅导", gain:{goutong:2,juece:1,gongyi:1},
+        growth:"你的耐心辅导让新队长快速上手，全队月报质量稳定提升。",
+        review:"金老师表扬你发挥了传帮带作用。",
+        promo:"培养新人能力是副队长的重要贡献。" },
+      { t:"只发一份旧模板，让他自己摸索", gain:{},
+        growth:"新队长反复犯错，你不得不反复纠错，浪费大量时间。",
+        review:"金老师提醒你主动带教。",
+        promo:"缺乏带教会导致团队效率低下。" },
+    ]},
+  { id:"d8", title:"月报模板迭代优化", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
+    scene:"s4_meeting", face:"jin",
+    desc:"各小队反馈现有月报模板过于繁琐，填报耗时。",
+    inner:"模板是金老师定的，我们改不了，忍忍吧。",
+    opts:[
+      { t:"收集各小队意见，精简冗余字段，设计新版模板上报金老师", gain:{minrui:2,juece:1,gongyi:1},
+        growth:"你推动了流程优化，全队填报效率显著提升。",
+        review:"金老师采纳了你的建议，并称赞你善于倾听一线声音。",
+        promo:"持续改进是副队长的核心素养。" },
+      { t:"维持原样，不主动提议", gain:{},
+        growth:"各小队继续忍受繁琐流程，抱怨增多，但你选择沉默。",
+        review:"金老师后来主动找你询问改进建议，你措手不及。",
+        promo:"缺乏主动思考会错失进步机会。" },
+    ]},
+];
+
+// ===== 总队长章剧情池（8 条，取自 青春楼长.html DIRECTOR_POOL，属性键已映射）=====
+const DIRECTOR_POOL = [
+  { id:"r1", title:"月度全体例会：有备而来还是临时开会？", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
+    scene:"s4_meeting", face:"xiaodui",
+    desc:"你需要组织月度全体小队长例会，总结上月工作。",
+    inner:"大家坐下来随便聊聊就行，没必要准备太多。",
+    opts:[
+      { t:"会前收集月报难点，制定议程，会后整理纪要", gain:{juece:2,goutong:2,gongyi:1},
+        growth:"你发现充分的准备能让会议高效解决问题，团队执行力明显增强。",
+        review:"会议效率高，金老师对你的组织能力表示认可。",
+        promo:"高效的会议统筹是总队长的核心能力。" },
+      { t:"无筹备随机开会，不记录内容", gain:{xinren:-1},
+        growth:"会议漫无边际，没有解决实际问题，组员们感到浪费时间。",
+        review:"金老师提醒你会议应有明确目标。",
+        promo:"会议低效会损害团队士气。" },
+    ]},
+  { id:"r2", title:"向金老师汇报：数据支撑还是口头零散？", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
+    scene:"s4_meeting", face:"jin",
+    desc:"你需要定期向金老师汇报全队工作进展。",
+    inner:"口头说说就行，数据太繁琐。",
+    opts:[
+      { t:"整合月报数据，制作结构化汇报材料", gain:{minrui:2,goutong:2,gongyi:1},
+        growth:"你用数据清晰展示了团队成果和短板，金老师对你的汇报非常满意。",
+        review:"金老师认为你的汇报为下一步决策提供了有力支撑。",
+        promo:"数据驱动的工作汇报是总队长的基本功。" },
+      { t:"临场口头随意汇报，无数据支撑", gain:{minrui:-1},
+        growth:"你讲得笼统，金老师无法掌握具体问题，对你的能力产生质疑。",
+        review:"金老师要求你下次提供详细数据。",
+        promo:"缺乏数据支撑会降低信任度。" },
+    ]},
+  { id:"r3", title:"跨小队自运转标准统一：协调还是放任？", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
+    scene:"s4_meeting", face:"xiaodui",
+    desc:"各小队自运转流程不统一，导致协同困难。",
+    inner:"各小队有自己的习惯，没必要强求统一。",
+    opts:[
+      { t:"联合副队长梳理冲突点，出台全队统一标准", gain:{juece:2,goutong:1,gongyi:1},
+        growth:"你推动了标准化建设，各小队协作效率大幅提升。",
+        review:"全队自运转顺畅，金老师高度评价你的协调能力。",
+        promo:"标准化管理是总队长的关键职能。" },
+      { t:"保留各小队原有流程，不统一", gain:{xinren:-1},
+        growth:"流程混乱导致跨小队合作时摩擦不断，居民也感受到服务不一致。",
+        review:"金老师指出你缺乏全局意识。",
+        promo:"放任自流会损害团队整体形象。" },
+    ]},
+  { id:"r4", title:"换届期平稳过渡：谨慎还是照常？", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
+    scene:"s3_corridor", face:"wanggeyuan",
+    desc:"社区网格员换届，敏感时期你需要注意工作分寸。",
+    inner:"科普内容与换届无关，照常推送就行。",
+    opts:[
+      { t:"暂停敏感内容，主动联系新旧网格员平稳衔接", gain:{goutong:2,xinren:1,gongyi:1},
+        growth:"你稳妥地度过了换届期，社区关系未受影响，金老师称赞你成熟老练。",
+        review:"换届平稳过渡，各方均表满意。",
+        promo:"敏锐的政治敏感度是总队长的必备素质。" },
+      { t:"无视换届，照常批量转发科普", gain:{xinren:-1},
+        growth:"你的推送在敏感时期引起了争议，社区投诉增加。",
+        review:"金老师批评你缺乏风险意识。",
+        promo:"忽视敏感节点会引发严重后果。" },
+    ]},
+  { id:"r5", title:"下一学年工作计划撰写：创新还是照搬？", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
+    scene:"s4_meeting", face:"hero_v4",
+    desc:"你需要撰写下一学年的工作计划，为团队定方向。",
+    inner:"直接沿用去年的模板，改一下年份就行。",
+    opts:[
+      { t:"汇总两年月报居民诉求，创新设计全年科普、走访、志愿活动方案", gain:{juece:2,minrui:1,gongyi:1},
+        growth:"你结合历史数据，制定出更有针对性的计划，得到金老师高度认可。",
+        review:"计划具有前瞻性和可操作性，团队方向明确。",
+        promo:"创新规划能力是总队长的核心竞争力。" },
+      { t:"直接沿用去年旧方案，仅修改年份", gain:{},
+        growth:"你的计划缺乏新意，无法适应新的社区需求。",
+        review:"金老师指出计划过于陈旧，要求重新思考。",
+        promo:"缺乏创新会阻碍团队发展。" },
+    ]},
+  { id:"r6", title:"全域跨社区科普统筹：均衡分配还是随意对接？", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
+    scene:"s2_square", face:"resident_f",
+    desc:"你需要统筹多个社区的科普活动，确保覆盖均衡。",
+    inner:"先跟熟悉的社区对接，其他的以后再说。",
+    opts:[
+      { t:"查阅各社区覆盖数据，按缺口均衡分配各小队任务", gain:{juece:2,goutong:1,xinren:1},
+        growth:"你通过数据分析，使科普资源得到最优配置，居民满意度提升。",
+        review:"各社区覆盖均衡，金老师称赞你的全局统筹能力。",
+        promo:"全局统筹是总队长的核心职责。" },
+      { t:"仅对接少量熟悉社区，无统筹分配", gain:{xinren:-1},
+        growth:"部分社区长期被忽视，居民抱怨科普服务不公。",
+        review:"金老师批评你缺乏全局视野。",
+        promo:"缺乏统筹会导致资源分配失衡。" },
+    ]},
+  { id:"r7", title:"项目发展研讨：创新提案还是维持现状？", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
+    scene:"s4_meeting", face:"xiaodui",
+    desc:"你召集全体小队长，讨论团队未来发展方向。",
+    inner:"现在运行得挺好，没必要大改，随便听听意见就好。",
+    opts:[
+      { t:"组织结构化研讨，鼓励创新，整理可落地方案", gain:{juece:2,goutong:2,gongyi:2},
+        growth:"你激发了团队创造力，收集到多项可执行改进措施。",
+        review:"金老师高度赞赏你的领导力，方案被采纳实施。",
+        promo:"创新引领是总队长的核心价值。" },
+      { t:"简单征求几句意见，不形成具体计划", gain:{xinren:-1},
+        growth:"讨论流于形式，没有实质产出，团队感到失望。",
+        review:"金老师指出你缺乏推动力。",
+        promo:"缺乏变革意识会导致团队停滞。" },
+    ]},
+  { id:"r8", title:"志愿者激励机制优化", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
+    scene:"s4_meeting", face:"xinvol",
+    desc:"部分志愿者反映付出与收获不匹配，积极性下降。",
+    inner:"志愿活动本来就不求回报，他们应该调整心态。",
+    opts:[
+      { t:"统计工作量数据，设计分层激励机制（证书、表彰、培训机会）", gain:{juece:2,goutong:1,gongyi:2},
+        growth:"新机制提升了志愿者归属感，留存率明显提高。",
+        review:"金老师称赞你懂得调动人的积极性。",
+        promo:"卓越的总队长懂得激励团队。" },
+      { t:"发通知强调奉献精神，不改变任何实际措施", gain:{xinren:-1},
+        growth:"志愿者感觉被画大饼，更多人心生退意。",
+        review:"金老师批评你脱离群众。",
+        promo:"忽视成员需求会导致人才流失。" },
+    ]},
+];
+
+// ===== 小队长任期届满后的晋升方向二选一分支 =====
+const BRANCH_NODE = {
+  id:"branch_pick", title:"两年任期届满，金老师找你谈去向", type:"branch",
+  typeLabel:"晋升抉择", typeTrig:"任期届满 · 方向二选一",
+  scene:"s4_meeting", face:"jin",
+  desc:"两年的小队长任期走到尾声。金老师把你叫到社区办公室，桌上摆着两份岗位意向表：一份副队长，负责全队对内内务；一份总队长，负责对外全局统筹。",
+  inner:"对内把队伍带顺，还是对外把声音传远，这一步会决定我后面两年的路。",
+  opts:[
+    { t:"竞选副队长 · 对内内务：月报汇总、台账质控、经验沉淀、内部带教", gain:{}, branch:"deputy",
+      growth:"你更想沉下心把团队的内务理顺，让每一份月报都经得起复盘。",
+      review:"金老师点头：内务稳，队伍才稳。",
+      promo:"你选择了沉心内务的路。" },
+    { t:"竞选总队长 · 对外全局：对接金老师、会议统筹、项目发展、全域自运转", gain:{}, branch:"director",
+      growth:"你更想站到台前，把社区的声音传出去，把项目带向更远。",
+      review:"金老师点头：全局通，团队才通。",
+      promo:"你选择了走向全局的路。" },
+  ]
+};
+
+// ===== 章节编排：按节点类型分组推进，组内随机 =====
+function shuffle(a){
+  const r = a.slice();
+  for (let i = r.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [r[i], r[j]] = [r[j], r[i]];
+  }
+  return r;
+}
+// ===== 章节轮次抽卡 =====
+// 设计：进入一章时把该章全部节点「按秩序打乱」成一条固定队列，再按幕切片。
+//   - 高危机「阶段必现」：高危节点被固定排进各幕（不允许因随机而漏掉）
+//   - 跨幕不重复：队列切片天然不重复，整章走完恰好覆盖全部节点
+//   - 类型节奏：同一幕内按 daily→monthly→interpersonal→special 顺序呈现
+const ROUND_SIZE = { volunteer:6, leader:5, deputy:4, director:4 };
+// 本章打乱后的节点队列 + 当前读到第几个（跨幕共享）
+let chapterQueue = [];
+let queueCursor = 0;
+
+function poolFor(chapter){
+  if (chapter === "leader")   return LEADER_POOL;
+  if (chapter === "deputy")   return DEPUTY_POOL;
+  if (chapter === "director") return DIRECTOR_POOL;
+  return VOLUNTEER_POOL;
+}
+
+// 把一章的节点排成队列：高危优先均匀分配到各幕，其余随机打乱
+function makeQueue(chapter){
+  const pool = poolFor(chapter);
+  const perRound = ROUND_SIZE[chapter];
+  const total = Math.max(1, Math.ceil(pool.length / perRound));
+  const specials = shuffle(pool.filter(s => s.type === "special"));
+  const others = shuffle(pool.filter(s => s.type !== "special"));
+
+  // 每幕先分一个高危（有则分），再把其余节点平铺补满
+  const slots = Array.from({ length: total }, () => []);
+  specials.forEach((s, i) => { slots[i % total].push(s); });
+  let oi = 0;
+  for (let r = 0; r < total; r++){
+    while (slots[r].length < perRound && oi < others.length){
+      slots[r].push(others[oi++]);
+    }
+  }
+  // 收尾：其余节点分完仍多出的槽位（理论上不会），用剩余高危补
+  // 幕内按类型顺序排列，形成稳定节奏
+  return slots.flatMap(rows =>
+    TYPE_ORDER.flatMap(t => shuffle(rows.filter(s => s.type === t)))
+  );
+}
+
+// 兼容旧调用：构建整章（一次性把全部节点按类型顺序排好，仅调试路由用）
+function buildChapter(pool){
+  let out = [];
+  TYPE_ORDER.forEach(t => { out = out.concat(shuffle(pool.filter(s => s.type === t))); });
+  return out;
+}
+let STORY = [];
+// 本章已完成的幕数 / 总幕数（用于进度显示）
+let roundNo = 1, roundTotal = 1;
+
+// 取出本章下一幕（从 chapterQueue 按 ROUND_SIZE 切片）；返回 false 表示本章已走完
+function nextRound(){
+  const perRound = ROUND_SIZE[curChapter];
+  const slice = chapterQueue.slice(queueCursor, queueCursor + perRound);
+  if (!slice.length) return false;
+  queueCursor += perRound;
+  STORY = slice;
+  idx = 0;
+  return true;
+}
+
+// 当前所在章节：volunteer（志愿者）/ leader（小队长）/ branch（二选一）/ deputy（副队长）/ director（总队长）
+let curChapter = "volunteer";
+// 二选一分支节点选中的目标章（deputy / director）
+let pendingBranch = "";
+// 颁奖典礼界面结束后要执行的续接动作（进入对应章节）
+let awardNext = null;
+let idx = 0;
+// 是否停在结算页（已选完、待推进）；lastPick = 结算页对应的选项序号
+let onResult = false, lastPick = -1;
+const $ = id => document.getElementById(id);
+
+function show(id){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  $(id).classList.add("active");
+}
+
+// ===== 玩家档案：昵称 / 年级 / 专业（不同选择给不同初始属性）=====
+const GRADES = ["大一", "大二", "大三", "大四"];
+const MAJORS = ["社会工作", "公共事业管理", "政治学与行政学"];
+// now = 入学即刻生效；after = 晋升小队长、三项管理属性启用时追加
+const GRADE_BONUS = {
+  "大一":{now:{gongyi:1},            after:{}},
+  "大二":{now:{juece:1},             after:{}},
+  "大三":{now:{xinren:1},            after:{xietiao:1}},
+  "大四":{now:{minrui:1},            after:{tongchou:1}},
+};
+const MAJOR_BONUS = {
+  "社会工作":     {now:{xinren:1, goutong:1}, after:{xietiao:1}},
+  "公共事业管理": {now:{juece:1},             after:{tongchou:1, xietiao:1}},
+  "政治学与行政学":{now:{minrui:1, juece:1},  after:{duiwai:1}},
+};
+let profile = {name:"小楼", grade:"大一", major:"社会工作"};
+// 晋升后才生效的档案加成，先存着
+let pendingBonus = {};
+
+// ===== 换个岗位再来一次 =====
+// 走完一条支线（副队长 / 总队长）后，解锁另一条支线的"直达"入口，
+// 新建档案时可跳过志愿者 + 小队长两章，直接进入该支线。
+let startPoint = "full";   // "full" | "deputy" | "director"
+const UNLOCK_KEY = "qclz_pixel_unlocked_v1";
+let unlocked = { deputy:false, director:false };
+function loadUnlocked(){
+  try {
+    const r = JSON.parse(localStorage.getItem(UNLOCK_KEY));
+    if (r) unlocked = Object.assign({deputy:false, director:false}, r);
+  } catch (e) {}
+}
+function saveUnlocked(){
+  try { localStorage.setItem(UNLOCK_KEY, JSON.stringify(unlocked)); } catch (e) {}
+}
+// 走完 ch 这一章，解锁"另一条"支线直达
+function markUnlocked(ch){
+  if (ch !== "deputy" && ch !== "director") return;
+  unlocked[ch === "deputy" ? "director" : "deputy"] = true;
+  saveUnlocked();
+}
+
+function fmtBonus(obj){
+  const ks = Object.keys(obj || {});
+  if (!ks.length) return '<span class="none">无</span>';
+  return ks.map(k => {
+    const a = ATTR.find(x => x.key === k);
+    const tag = a.locked ? '<span class="lk">锁</span>' : "";
+    return `<b>${a.name} +${obj[k]}</b>${tag}`;
+  }).join("　");
+}
+
+function renderProfile(){
+  $("p-grade").innerHTML = GRADES.map(g =>
+    `<button class="chip ${g === profile.grade ? "on" : ""}" onclick="setGrade('${g}')">${g}</button>`).join("");
+  $("p-major").innerHTML = MAJORS.map(m =>
+    `<button class="chip ${m === profile.major ? "on" : ""}" onclick="setMajor('${m}')">${m}</button>`).join("");
+  const now = Object.assign({}, MAJOR_BONUS[profile.major].now, GRADE_BONUS[profile.grade].now);
+  const after = Object.assign({}, MAJOR_BONUS[profile.major].after, GRADE_BONUS[profile.grade].after);
+  $("p-bonus").innerHTML =
+    `入学加成：${fmtBonus(now)}<br>` +
+    `<span class="dim">晋升后解锁：${fmtBonus(after)}</span>`;
+  // 起点选择器：走完一条支线后，解锁另一条的"直达"
+  const spWrap = $("p-start-wrap");
+  const sp = $("p-start");
+  if (unlocked.deputy || unlocked.director){
+    spWrap.style.display = "block";
+    const opts = [{v:"full", t:"全程 · 从志愿者开始"}];
+    if (unlocked.deputy)   opts.push({v:"deputy",   t:"直达 · 副队长线"});
+    if (unlocked.director) opts.push({v:"director", t:"直达 · 总队长线"});
+    sp.innerHTML = opts.map(o =>
+      `<button class="chip ${o.v === startPoint ? "on" : ""}" onclick="setStartPoint('${o.v}')">${o.t}</button>`).join("");
+  } else {
+    spWrap.style.display = "none";
+    startPoint = "full";
+  }
+}
+function setStartPoint(v){ startPoint = v; renderProfile(); }
+function setGrade(g){ profile.grade = g; renderProfile(); }
+function setMajor(m){ profile.major = m; renderProfile(); }
+function goCreate(keepPoint){ if (!keepPoint) startPoint = "full"; renderProfile(); show("scr-create"); }
+function confirmProfile(){
+  const n = $("p-name").value.trim();
+  profile.name = n ? n.slice(0, 8) : "小楼";
+  resetState();   // 清掉上一周目残留，回到干净基线
+  const now = Object.assign({}, MAJOR_BONUS[profile.major].now, GRADE_BONUS[profile.grade].now);
+  for (const k in now) state[k] += now[k];
+  pendingBonus = Object.assign({}, MAJOR_BONUS[profile.major].after, GRADE_BONUS[profile.grade].after);
+  $("a-name").textContent = profile.name;
+  $("a-info").textContent = `${profile.major} · ${profile.grade}`;
+  if (startPoint === "deputy" || startPoint === "director") startDirect(startPoint);
+  else startGame();
+}
+
+function renderHud(){
+  const list = visibleAttr();
+  // 固定 3 列：公益初心跨 2 列，正好凑满网格
+  //   志愿者 5 项 = 4 普通 + 公益初心(2格) = 6 格 → 2 行满
+  //   晋升后 8 项 = 7 普通 + 公益初心(2格) = 9 格 → 3 行满
+  // 若按项数切 4 列，公益初心所在行会空出格子、且 5 颗星会被裁
+  $("hud").style.setProperty("--hud-cols", 3);
+  $("hud").innerHTML = list.map(a => {
+    const v = state[a.key];
+    const shown = a.hidden ? starMark(v) : v;
+    return `<div class="attr ${a.hidden ? "heart" : ""}" title="${a.name}">
+      <img src="assets/img/icons/${a.icon}.png" alt="${a.name}">
+      <div class="tx"><div class="nm">${a.name}</div><div class="vl">${shown}</div></div>
+    </div>`;
+  }).join("");
+  const lock = $("hud-lock");
+  lock.className = "lock-note" + (promoted ? " on" : "");
+  lock.textContent = promoted
+    ? `三项管理属性已启用：${LOCK_NAMES}`
+    : `管理属性未解锁：${LOCK_NAMES}（晋升小队长后启用）`;
+  renderSideHud();
+}
+
+// 宽屏左面板：属性常驻（始终显示全部 8 项当前数值，晋升前锁定项灰显）
+function renderSideHud(){
+  const box = $("side-hud");
+  if (!box) return;
+  box.innerHTML = ATTR.map(a => {
+    const v = state[a.key];
+    const shown = a.hidden ? starMark(v) : v;
+    const locked = a.locked && !promoted;
+    const lk = locked ? '<span class="lk">锁</span>' : "";
+    const cls = (a.hidden ? "heart " : "") + (locked ? "locked" : "");
+    return `<div class="side-attr ${cls}">
+      <img src="assets/img/icons/${a.icon}.png" alt="${a.name}">
+      <div class="sa-tx"><div class="sa-nm">${a.name}${lk}</div><div class="sa-vl">${shown}</div></div>
+    </div>`;
+  }).join("");
+  const lock = $("side-lock");
+  if (lock) lock.textContent = promoted
+    ? `管理属性已启用：${LOCK_NAMES}`
+    : `管理属性未解锁：${LOCK_NAMES}（晋升后启用）`;
+}
+
+// 宽屏右面板：章节进度（成长四阶 + 当前阶段节点进度）
+function renderProgress(){
+  const box = $("side-progress");
+  if (!box) return;
+  const stages = [
+    {id:"volunteer", nm:"普通志愿者", sub:"舆情值守 · 科普转发"},
+    {id:"leader",    nm:"小队长",     sub:"监督把关 · 团队带队"},
+    {id:"post",      nm:"晋升抉择",   sub:"副队长 / 总队长 二选一"},
+  ];
+  const cur = curChapter;
+  const curIdx = cur === "volunteer" ? 0 : cur === "leader" ? 1 : 2;
+  let steps = stages.map((s, i) => {
+    const st = i < curIdx ? "done" : i === curIdx ? "cur" : "";
+    let sub = s.sub;
+    if (i === 2 && (cur === "deputy" || cur === "director")){
+      sub = cur === "deputy" ? "已选 · 副队长（内务）" : "已选 · 总队长（全局）";
+    }
+    return `<div class="chap-step ${st}"><div class="cs-dot"></div>
+      <div class="cs-tx"><div class="cs-nm">${s.nm}</div><div class="cs-sub">${sub}</div></div></div>`;
+  }).join("");
+  let nowLine = "准备开始你的成长旅程";
+  if (cur === "branch"){
+    nowLine = `当前：晋升抉择，请选择发展路线`;
+  } else if (["volunteer","leader","deputy","director"].includes(cur)){
+    const total = (STORY && STORY.length) || 0;
+    if (!total) nowLine = cur === "volunteer" ? "准备开始你的成长旅程" : "本阶段即将开始";
+    else {
+      const rt = roundTotal > 1 ? `第 <b>${roundNo}</b>/${roundTotal} 幕 · ` : "";
+      nowLine = `本阶段进度：${rt}第 <b>${idx + 1}</b> / ${total} 个节点`;
+    }
+  }
+  box.innerHTML = steps + `<div class="chap-now">${nowLine}</div>`;
+}
+
+// 2× 缩放开关（仅放大手机内容，宽屏辅助面板保持原生尺寸）
+function toggleZoom(){
+  const p = document.querySelector(".phone");
+  const on = p.classList.toggle("zoom2");
+  const btn = $("zoom-toggle");
+  if (btn){ btn.classList.toggle("on", on); btn.textContent = on ? "1× 还原" : "2× 放大"; }
+}
+
+// 逐字打字机：把 text 逐字写入 el，完成后调用 done
+let _typeTimers = [];
+let curNode = null;
+let readingStep = "event";   // 阅读两拍：event（事件）→ inner（内心）→ 选择
+function stopTyping(){ _typeTimers.forEach(t => clearTimeout(t)); _typeTimers = []; }
+function typeInto(el, text, speed, done){
+  _typeSpeed = speed || 26;   // 同步给打字音，保证音画同节奏
+  el.textContent = "";
+  const caret = document.createElement("span");
+  caret.className = "caret";
+  el.appendChild(caret);
+  let i = 0;
+  (function step(){
+    if (i < text.length){
+      caret.insertAdjacentText("beforebegin", text[i]);
+      playSfx("type");
+      i++;
+      _typeTimers.push(setTimeout(step, speed));
+    } else {
+      caret.remove();
+      if (done) done();
+    }
+  })();
+}
+// 读完点击「继续」：先事件后内心，两拍走完再进选择态
+function advanceReading(){
+  const n = STORY[idx];
+  if (readingStep === "event"){
+    const monoText = (n && n.inner) || "";
+    if (!monoText){ enterChoose(); return; }   // 该节点无内心，直接进选择
+    // 第二拍：隐藏事件，单独显示内心
+    $("scr-story").classList.remove("phase-read-event");
+    $("scr-story").classList.add("phase-read-inner");
+    stopTyping();
+    $("s-continue").classList.remove("ready");
+    readingStep = "inner";
+    typeInto($("s-mono"), monoText, 26, () => { $("s-continue").classList.add("ready"); });
+    const sc = document.querySelector(".story-scroll");
+    if (sc) sc.scrollTop = 0;
+  } else {
+    enterChoose();
+  }
+}
+// 读完点击「继续」：进入选择态，阅读区压缩为顶部长条，选项浮现
+function enterChoose(){
+  if (curNode){
+    stopTyping();
+    $("s-desc").textContent = curNode.desc || "";
+    $("s-mono").textContent = curNode.inner || "";
+  }
+  $("scr-story").classList.remove("phase-read-event", "phase-read-inner");
+  $("scr-story").classList.add("phase-choose");
+  const sc = document.querySelector(".story-scroll");
+  sc.scrollTop = 0;
+  updateScrollHint();
+}
+
+// 选择态内容超出时显示「上滑」提示，滚动到底自动隐藏
+function updateScrollHint(){
+  const sc = document.querySelector(".story-scroll");
+  const hint = $("s-scrollhint");
+  if (!sc || !hint) return;
+  const overflow = sc.scrollHeight - sc.clientHeight - sc.scrollTop > 8;
+  hint.classList.toggle("show", overflow);
+}
+document.querySelector(".story-scroll")?.addEventListener("scroll", updateScrollHint);
+
+// 选项按钮内的属性影响预览（复用属性体系；涨=红 跌=绿，锁定属性带「锁」）
+function optGainHtml(o){
+  const gain = o.gain || {};
+  const keys = Object.keys(gain);
+  if (!keys.length) return '<span class="gi flat">无属性影响</span>';
+  return keys.map(k => {
+    const a = ATTR.find(x => x.key === k);
+    if (!a) return "";
+    const v = gain[k];
+    const cls = v >= 0 ? "up" : "down";
+    const lk = (a.locked && !promoted) ? '<i class="lk">锁</i>' : "";
+    const sign = v >= 0 ? "+" : "";
+    return `<span class="gi ${cls}">${a.name} ${sign}${v}${lk}</span>`;
+  }).join("");
+}
+
+// 进入某章：排好整章队列，开第一幕
+function startChapter(chapter){
+  curChapter = chapter;
+  const pool = poolFor(chapter);
+  roundTotal = Math.max(1, Math.ceil(pool.length / ROUND_SIZE[chapter]));
+  roundNo = 1;
+  chapterQueue = makeQueue(chapter);
+  queueCursor = 0;
+  onResult = false; lastPick = -1;
+  nextRound();
+  renderNode();
+  saveGame();
+}
+
+function startGame(){
+  idx = 0; special = {}; promoted = false;
+  lastUnlock = "";
+  onResult = false; lastPick = -1;
+  startChapter("volunteer");
+  saveGame();
+}
+
+// 换个岗位再来一次：视作已晋升的小队长，跳过前两章直接进支线
+function startDirect(ch){
+  idx = 0; special = {};
+  lastUnlock = "";
+  onResult = false; lastPick = -1;
+  promoted = true;                       // 管理属性已解锁
+  for (const k in pendingBonus) state[k] += pendingBonus[k];  // 晋升加成视作已发放
+  pendingBonus = {};
+  startChapter(ch);
+  saveGame();
+}
+
+// ===== 背景音乐 =====
+// 浏览器禁止无交互自动播放：先静默尝试，被拦则挂一次性手势监听补播
+const BGM_KEY = "qclz_pixel_bgm_v1";
+const BGM_SRC = "assets/audio/bgm.mp3";
+let bgm = null;              // HTMLAudioElement
+let bgmOn = true;            // 是否开启（默认开）
+let bgmBlocked = false;      // 被自动播放策略拦下、等待首次手势
+
+function bgmPref(){
+  try { return localStorage.getItem(BGM_KEY) !== "0"; } catch (e) { return true; }
+}
+function setBgmPref(on){
+  try { localStorage.setItem(BGM_KEY, on ? "1" : "0"); } catch (e) {}
+}
+
+function initBgm(){
+  bgmOn = bgmPref();
+  try {
+    bgm = new Audio(BGM_SRC);
+    bgm.loop = true;
+    bgm.volume = 0.6;               // 背景音乐：略高于音效，确保清晰可闻不抢戏
+    bgm.preload = "auto";
+    // 以音频真实事件为准重绘，不依赖 play() 的 Promise 时序
+    bgm.addEventListener("playing", () => { bgmBlocked = false; paintBgm(); });
+    bgm.addEventListener("pause",   () => paintBgm());
+  } catch (e) { bgm = null; }
+  if (bgmOn) tryPlayBgm(); else paintBgm();
+}
+
+// 是否正在出声：同时满足「已开启」且「未被暂停」且「已就绪」
+function bgmPlaying(){
+  return !!(bgm && bgmOn && !bgm.paused && bgm.readyState >= 2);
+}
+
+// 尝试播放；被浏览器拦下就挂一次性手势监听
+function tryPlayBgm(){
+  if (!bgm || !bgmOn) { paintBgm(); return; }
+  let p = null;
+  try { p = bgm.play(); } catch (e) { p = null; }
+  if (p && typeof p.then === "function"){
+    p.then(() => { bgmBlocked = false; paintBgm(); })
+     .catch(() => {
+        bgmBlocked = true; paintBgm();
+        armGestureKick();
+     });
+  } else {
+    paintBgm();
+  }
+  // 兜底重绘：等到解码就绪后状态可能变化
+  setTimeout(paintBgm, 400);
+}
+
+// 挂一次性手势监听：用户第一次点击 / 按键 / 触摸时补播
+function armGestureKick(){
+  const kick = () => {
+    window.removeEventListener("pointerdown", kick);
+    window.removeEventListener("keydown", kick);
+    window.removeEventListener("touchstart", kick);
+    if (!bgmOn || !bgm) return;
+    try {
+      const p = bgm.play();
+      if (p && typeof p.then === "function"){
+        p.then(() => { bgmBlocked = false; paintBgm(); }).catch(() => {});
+      }
+    } catch (e) {}
+  };
+  window.addEventListener("pointerdown", kick);
+  window.addEventListener("keydown", kick);
+  window.addEventListener("touchstart", kick);
+}
+
+// 开关按钮 + 状态栏小图标
+function toggleBgm(){
+  bgmOn = !bgmOn;
+  setBgmPref(bgmOn);
+  if (bgmOn) tryPlayBgm();
+  else if (bgm) bgm.pause();
+  paintBgm();
+}
+
+function paintBgm(){
+  const btn = $("bgm-toggle");
+  if (!btn) return;
+  const playing = bgmPlaying();
+  btn.classList.toggle("on", playing);
+  btn.classList.toggle("off", !bgmOn);
+  btn.title = !bgmOn ? "背景音乐 已关闭（点击开启）"
+            : bgmBlocked ? "背景音乐 待播放（点击画面任意处开始）"
+            : playing ? "背景音乐 播放中（点击关闭）"
+            : "背景音乐 已开启（点击可关闭）";
+}
+
+// ===== 音效（点击 / 颁奖 / 打字短音，与背景音乐相互独立）=====
+const SFX_KEY = "qclz_pixel_sfx_v1";
+let sfxClick = null, sfxAward = null, sfxType = null;
+let sfxOn = true;           // 默认开
+let _lastTypeSfx = 0;       // 打字音节流时间戳
+let _typeSpeed = 26;        // 当前打字机速度（ms/字），用于让打字音与画面同节奏
+
+function sfxPref(){ try { return localStorage.getItem(SFX_KEY) !== "0"; } catch (e) { return true; } }
+function setSfxPref(on){ try { localStorage.setItem(SFX_KEY, on ? "1" : "0"); } catch (e) {} }
+
+function initSfx(){
+  sfxOn = sfxPref();
+  try {
+    sfxClick = new Audio("assets/audio/sfx_click.mp3"); sfxClick.volume = 0.2; sfxClick.preload = "auto";
+    sfxAward = new Audio("assets/audio/sfx_award.mp3"); sfxAward.volume = 0.5; sfxAward.preload = "auto";
+    sfxType  = new Audio("assets/audio/sfx_type.mp3");  sfxType.volume  = 0.15; sfxType.preload = "auto";
+    // 预热打字音：提前解码，避免首字出现时声音还没准备好导致整体滞后
+    try { sfxType.load && sfxType.load(); } catch (e) {}
+  } catch (e) { sfxClick = sfxAward = sfxType = null; }
+  // 打字音改用 Web Audio 缓冲：解码一次并裁掉前导静音，逐字触发零延迟、与画面同拍
+  decodeSfxType();
+  paintSfx();
+}
+
+// ---- 打字音的 Web Audio 精确播放：裁掉 mp3 前导静音，逐字零延迟触发 ----
+let sfxTypeBuf = null;     // 解码并裁剪后的 AudioBuffer
+let _sfxCtx = null;        // 共享 AudioContext
+const _SFX_TRIM_TH = 0.01; // 静音判定阈值
+
+function getSfxCtx(){
+  try {
+    if (!_sfxCtx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) _sfxCtx = new AC();
+    }
+    if (_sfxCtx && _sfxCtx.state === "suspended") _sfxCtx.resume();
+  } catch (e) { _sfxCtx = null; }
+  return _sfxCtx;
+}
+
+function trimSfxBuffer(buf){
+  try {
+    const ch = buf.getChannelData(0);
+    let s = 0, e = ch.length - 1;
+    while (s < e && Math.abs(ch[s]) < _SFX_TRIM_TH) s++;
+    while (e > s && Math.abs(ch[e]) < _SFX_TRIM_TH) e--;
+    if (e <= s) return buf;
+    const len = e - s + 1;
+    const out = _sfxCtx.createBuffer(buf.numberOfChannels, len, buf.sampleRate);
+    for (let c = 0; c < buf.numberOfChannels; c++)
+      out.getChannelData(c).set(buf.getChannelData(c).subarray(s, e + 1));
+    return out;
+  } catch (err) { return buf; }
+}
+
+function decodeSfxType(){
+  const ctx = getSfxCtx();
+  if (!ctx) return;
+  try {
+    fetch("assets/audio/sfx_type.mp3")
+      .then(r => r.arrayBuffer())
+      .then(ab => ctx.decodeAudioData(ab))
+      .then(buf => { sfxTypeBuf = trimSfxBuffer(buf); })
+      .catch(() => { sfxTypeBuf = null; });
+  } catch (e) { sfxTypeBuf = null; }
+}
+
+// 逐字触发打字音（Web Audio 缓冲优先，降级用 HTML5 Audio）
+function playTypeSfx(){
+  if (sfxTypeBuf){
+    try {
+      const ctx = getSfxCtx();
+      const src = ctx.createBufferSource();
+      src.buffer = sfxTypeBuf;
+      const g = ctx.createGain();
+      g.gain.value = 0.15;
+      src.connect(g).connect(ctx.destination);
+      src.start();
+      return true;
+    } catch (e) {}
+  }
+  return false;
+}
+
+// kind: "click" | "award" | "type"
+function playSfx(kind){
+  if (!sfxOn) return;
+  let a = null;
+  if (kind === "click") a = sfxClick;
+  else if (kind === "award") a = sfxAward;
+  else if (kind === "type"){
+    const now = Date.now();
+    // 让打字音节奏贴合画面：以打字机实际速度为准（最快 24ms 一声，避免过于密集）
+    if (now - _lastTypeSfx < Math.max(24, _typeSpeed)) return;
+    _lastTypeSfx = now;
+    // 优先用 Web Audio 缓冲（已裁静音、零延迟），逐字触发最跟手
+    if (playTypeSfx()) return;
+    a = sfxType;   // 降级：HTML5 Audio 元素
+  }
+  if (!a) return;
+  try { a.currentTime = 0; const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+}
+
+// 全屏统一点击音：点任意可交互元素都响一声
+function armSfxClick(){
+  const hit = (e) => {
+    const t = e.target;
+    if (!t || !t.closest) return;
+    if (t.closest("button, .pbtn, .chip, a[onclick], [onclick], .s-opts>*, .menu-btn, .bgm-btn, .sfx-btn"))
+      playSfx("click");
+  };
+  document.addEventListener("pointerdown", hit);
+}
+
+function toggleSfx(){
+  sfxOn = !sfxOn;
+  setSfxPref(sfxOn);
+  paintSfx();
+  if (sfxOn) playSfx("click");   // 开启时给一声反馈
+}
+
+function paintSfx(){
+  const btn = $("sfx-toggle");
+  if (!btn) return;
+  btn.classList.toggle("off", !sfxOn);
+  btn.title = sfxOn ? "音效 开启（点击关闭）" : "音效 已关闭（点击开启）";
+}
+
+// ===== 进度存档（localStorage）=====
+// 存档只记「可从 id 还原」的轻量数据：不放整个节点对象，只放 id / 数值 / 队列 id 列表
+const SAVE_KEY = "qclz_pixel_save_v1";
+
+function saveGame(){
+  try {
+    const data = {
+      v: 1,
+      ts: Date.now(),
+      profile,                       // 昵称 / 年级 / 专业
+      state,                         // 8 项属性数值
+      promoted,                      // 是否已晋升
+      pendingBonus,                  // 待补发的档案加成
+      lastUnlock,                    // 解锁 / 加成提示文案
+      special,                       // 高危处置记录
+      curChapter,                    // 当前章节
+      queueIds: chapterQueue.map(s => s.id),  // 本章队列（按 id 还原）
+      queueCursor,                   // 队列游标
+      roundNo, roundTotal,
+      idx,                           // 当前幕内位置
+      pendingBranch,                 // 二选一暂存（若在 branch 幕）
+      onResult,                      // 是否停在结算页（已选完、待推进）
+      lastPick,                      // 结算页对应的选项序号（-1 表示无）
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch (e) { /* 隐私模式 / 配额满：静默失败，不影响游戏 */ }
+}
+
+function hasSave(){
+  try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; }
+}
+
+function clearSave(){
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+}
+
+// 按 id 找回节点对象（跨四章池查找）
+function nodeById(id){
+  const all = [].concat(VOLUNTEER_POOL, LEADER_POOL, DEPUTY_POOL, DIRECTOR_POOL);
+  if (id === BRANCH_NODE.id) return BRANCH_NODE;
+  return all.find(s => s.id === id) || null;
+}
+
+function resumeGame(){
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); } catch (e) {}
+  if (!data || data.v !== 1){ goCreate(); return; }
+  // 1. 还原档案与数值
+  profile       = data.profile || profile;
+  state         = data.state || state;
+  promoted      = !!data.promoted;
+  pendingBonus  = data.pendingBonus || {};
+  lastUnlock    = data.lastUnlock || "";
+  special       = data.special || {};
+  curChapter    = data.curChapter || "volunteer";
+  roundNo       = data.roundNo || 1;
+  roundTotal    = data.roundTotal || 1;
+  queueCursor   = data.queueCursor || 0;
+  idx           = data.idx || 0;
+  pendingBranch = data.pendingBranch || "";
+  onResult      = !!data.onResult;
+  lastPick      = (typeof data.lastPick === "number") ? data.lastPick : -1;
+  // 2. 二选一幕：直接还原单节点，不涉及队列
+  if (curChapter === "branch"){
+    chapterQueue = [];
+    STORY = [BRANCH_NODE];
+    idx = 0;
+  } else {
+    // 队列按 id 还原
+    chapterQueue  = (data.queueIds || []).map(nodeById).filter(Boolean);
+    // 3. 当前这一幕 = 队列在游标处往回退一屏（游标指向下一幕起点）
+    const perRound = ROUND_SIZE[curChapter] || 6;
+    const start = Math.max(0, queueCursor - perRound);
+    STORY = chapterQueue.slice(start, start + perRound);
+  }
+  if (!STORY.length){ startChapter(curChapter); return; }
+  idx = Math.min(idx, STORY.length - 1);
+  // 4. 恢复档案栏与手机里的展示
+  $("a-name").textContent = profile.name;
+  $("a-info").textContent = `${profile.major} · ${profile.grade}`;
+  renderNode();
+  // 5. 若存档停在结算页，直接还原结算页，避免让玩家重选
+  if (onResult && lastPick >= 0){
+    renderResult(lastPick);
+    show("scr-result");
+  }
+}
+
+// ===== 弹层（状态栏菜单 / 二次确认共用）=====
+const CHAPTER_LABEL = {
+  volunteer: "普通志愿者",
+  leader: "小队长",
+  deputy: "副队长",
+  director: "总队长",
+  branch: "岗位选择",
+};
+
+function openModal(title, text, buttons){
+  $("modal-title").textContent = title;
+  const tx = $("modal-text");
+  tx.textContent = text || "";
+  tx.style.display = text ? "block" : "none";
+  const box = $("modal-btns");
+  box.innerHTML = buttons.map((b, i) =>
+    `<button class="pbtn ${b.cls || ""}" data-mi="${i}">${b.label}</button>`).join("");
+  box.querySelectorAll("button").forEach(btn => {
+    btn.onclick = () => buttons[Number(btn.dataset.mi)].onClick();
+  });
+  $("modal-mask").classList.add("on");
+}
+function closeModal(){ $("modal-mask").classList.remove("on"); }
+
+// 状态栏「菜单」：随时回封面（保留进度）或重新开始（清空进度）
+function openMenu(){
+  const onCover = $("scr-cover").classList.contains("active");
+  const where = onCover ? "" : `当前：${CHAPTER_LABEL[curChapter] || "进行中"} · 第 ${roundNo}/${roundTotal} 幕`;
+  const btns = [{ label: "继续游戏", cls: "blue", onClick: closeModal }];
+  if (!onCover && hasSave()){
+    btns.push({ label: "回到封面（保留进度）", cls: "ghost", onClick: () => {
+      closeModal();
+      show("scr-cover");
+      updateCoverButtons();
+    }});
+  }
+  btns.push({ label: "结局收集册", cls: "ghost", onClick: () => { closeModal(); openEndings(); } });
+  btns.push({ label: "重新开始（清空进度）", cls: "ghost", onClick: askRestart });
+  openModal("菜单", where, btns);
+}
+
+// 重新开始先二次确认，避免点错把进度清掉
+function askRestart(){
+  openModal("确定重新开始？", "昵称、属性、已走过的剧情都会归零，且无法恢复。", [
+    { label: "取消", cls: "ghost", onClick: closeModal },
+    { label: "重新开始", cls: "", onClick: doRestart },
+  ]);
+}
+
+function doRestart(){
+  clearSave();
+  // 带 #create 重载：内存状态全部归零，重载后直接进「创建楼长档案」
+  location.hash = "#create";
+  location.reload();
+}
+
+// 封面按钮：有存档时给「继续」+「重新开始」，无存档时只给「开始游戏」
+function updateCoverButtons(){
+  const has = hasSave();
+  $("btn-start").style.display   = has ? "none"  : "block";
+  $("btn-resume").style.display  = has ? "block" : "none";
+  $("btn-restart").style.display = has ? "block" : "none";
+  const got = getUnlockedEndings().length;
+  const be = $("btn-endings");
+  if (be) be.textContent = `结局收集册（${got}/${ENDINGS.length}）`;
+}
+
+function renderNode(){
+  const n = STORY[idx];
+  const t = NODE_TYPE[n.type] || {};
+  renderHud();
+  renderProgress();
+  $("s-tag").className = "node-tag t-" + n.type;
+  $("s-tag").textContent = n.typeLabel || t.label || "剧情";
+  $("s-trigger").textContent = n.typeTrig || t.trig || "";
+  const roundTxt = roundTotal > 1 ? `第 ${roundNo}/${roundTotal} 幕 · ` : "";
+  $("s-idx").textContent = `${roundTxt}${idx + 1} / ${STORY.length}`;
+  $("s-danger").className = "danger-bar" + (n.type === "special" ? " on" : "");
+  $("s-title").textContent = (n.type === "special" ? "【高危】" : "") + n.title;
+  $("s-title").style.color = n.type === "special" ? "var(--red)" : "var(--ink)";
+  $("s-scene").src = `assets/img/scenes/${n.scene}.png`;
+  // 处境：客观事件，有当事人时露出他的头像
+  const who = n.face || "hero_v1";
+  const hasWho = who !== "hero_v1";
+  $("s-narration").className = "narration" + (hasWho ? " has-face" : "");
+  $("s-narface").src = `assets/img/avatars/${who}.png`;
+  $("s-nartag").textContent = hasWho ? "当事人 · " + (FACE_NAME[who] || "居民") : "当前处境";
+  $("s-desc").textContent = n.desc;
+  // 内心：同屏气泡，动态标签
+  $("s-thface").src = "assets/img/avatars/hero_v1.png";
+  $("s-thinktag").textContent = profile.name + "的内心";
+  // 阅读两拍：先事件后内心，二者不同时出现
+  $("scr-story").classList.remove("phase-choose", "phase-read-inner");
+  $("scr-story").classList.add("phase-read-event");   // 第一拍：只显示事件
+  stopTyping();
+  $("s-continue").classList.remove("ready");
+  readingStep = "event";
+  const descText = n.desc || "";
+  const monoText = n.inner || "";
+  typeInto($("s-desc"), descText, 26, () => { $("s-continue").classList.add("ready"); });
+  $("s-opts").innerHTML = n.opts.map((o, i) =>
+    `<button class="opt" onclick="choose(${i})">
+       <div class="opt-main"><span class="opt-no">${i + 1}</span><span class="opt-t">${o.t}</span></div>
+     </button>`).join("");
+  document.querySelector(".story-scroll").scrollTop = 0;
+  $("s-scrollhint").classList.remove("show");
+  show("scr-story");
+}
+
+// 高危特殊事件的处置记录：选错即一票否决晋升
+let special = {};
+
+function choose(i){
+  const n = STORY[idx];
+  const o = n.opts[i];
+  if (o.branch) pendingBranch = o.branch;
+  for (const k in o.gain) state[k] = (state[k] || 0) + o.gain[k];
+  if (n.type === "special"){
+    special[n.id] = o.specialPositive ? "positive" : (o.specialNegative ? "negative" : null);
+  }
+  renderResult(i);
+  onResult = true; lastPick = i;
+  saveGame();          // 每次做出选择后存档（记下停在结算页）
+  show("scr-result");
+}
+
+// 结算页渲染（choose 与读档复用）
+function renderResult(i){
+  const n = STORY[idx];
+  const o = n.opts[i] || n.opts[0];
+  const gainHtml = Object.keys(o.gain).length
+    ? Object.entries(o.gain).map(([k, v]) => {
+        const a = ATTR.find(x => x.key === k);
+        const cls = v >= 0 ? "gain-up" : "gain-down";
+        const lk = (a.locked && !promoted) ? '<span class="lk">锁</span>' : "";
+        return `<div class="gain-item"><img src="assets/img/icons/${a.icon}.png" alt="${a.name}"><span class="${cls}">${a.name} ${v >= 0 ? "+" : ""}${v}</span>${lk}</div>`;
+      }).join("")
+    : `<div class="gain-item"><span class="gain-down">无属性提升</span></div>`;
+  const reviewBlock = o.review ? `
+    <div class="r-block"><div class="r-title">督导评语</div>
+      <div class="dialog" style="margin:0">
+        <img class="face" src="assets/img/avatars/jin.png" alt="金老师">
+        <div class="bubble who" data-who="金老师">${o.review}</div>
+      </div>
+    </div>` : "";
+  $("r-body").innerHTML = `
+    <span class="trigger">${STORY[idx].title} · 你的选择</span>
+    <div class="r-block"><div class="r-title">属性收益</div><div class="gain-list">${gainHtml}</div></div>
+    <div class="r-block"><div class="r-title">心理成长</div>
+      <div class="thought-inline" style="margin:14px 0 8px">
+        <img class="ti-face" src="assets/img/avatars/hero_v1.png" alt="我">
+        <div class="tdots"><i></i><i></i><i></i></div>
+        <div class="tbubble">
+          <span class="t-tag">${profile.name}的内心</span>
+          ${o.growth}
+        </div>
+      </div>
+    </div>
+    ${reviewBlock}
+    <div class="r-block"><div class="r-title">晋升影响</div><div>${o.promo}</div></div>`;
+  const isLast = idx === STORY.length - 1;
+  $("r-next").textContent = isLast ? "查看结局 →" : "继续下一幕 →";
+  document.querySelector(".result-scroll").scrollTop = 0;
+}
+
+function startBranch(){
+  curChapter = "branch";
+  STORY = [BRANCH_NODE];
+  idx = 0; special = {};
+  onResult = false; lastPick = -1;
+  renderNode();
+  saveGame();
+}
+
+function nextNode(){
+  onResult = false; lastPick = -1;   // 离开结算页，进入下一条
+  if (idx < STORY.length - 1){ idx++; renderNode(); saveGame(); return; }
+
+  // 本幕走完：本章还有下一幕就继续，否则推进阶段
+  if (["volunteer","leader","deputy","director"].includes(curChapter) && roundNo < roundTotal){
+    roundNo++;
+    nextRound();
+    renderNode();
+    saveGame();
+    return;
+  }
+
+  // 二选一分支节点点完 → 进入选定章（先放颁奖典礼）
+  if (curChapter === "branch"){
+    const target = pendingBranch;
+    awardNext = () => { pendingBranch = ""; startChapter(target); saveGame(); };
+    showAward(target);
+    return;
+  }
+  // 志愿者章全部走完 → 晋升判定
+  if (curChapter === "volunteer"){
+    if (evalPromotion()){
+      // 已晋升：先放颁奖典礼，再进入小队长章（清空志愿者阶段高危记录，晋升已定避免误判）
+      unlockEnding("leader_promo");
+      awardNext = () => { special = {}; startChapter("leader"); saveGame(); };
+      showAward("leader");
+    } else {
+      showEnding();
+    }
+    return;
+  }
+  // 小队长章全部走完 → 晋升方向二选一
+  if (curChapter === "leader"){
+    startBranch();
+    return;
+  }
+  // 副队长 / 总队长章全部走完 → 对应任期结局
+  showEnding();
+}
+
+// 晋升判定阈值（公益初心 8 / 居民信任 3 / 高危事件无负面）
+const PROMO = { gongyi: 8, xinren: 3 };
+
+// 晋升判定：公益初心 ≥8 / 居民信任 ≥3 / 高危事件无负面。首次晋升补发档案加成、启用管理属性
+let lastUnlock = "";
+function evalPromotion(){
+  const g = state.gongyi, xr = state.xinren;
+  const hasNeg = Object.values(special).some(v => v === "negative");
+  const ok = (g >= PROMO.gongyi) && (xr >= PROMO.xinren) && !hasNeg;
+  if (ok && !promoted){
+    const ks = Object.keys(pendingBonus);
+    if (ks.length){
+      for (const k in pendingBonus) state[k] = (state[k] || 0) + pendingBonus[k];
+      lastUnlock = `已启用 ${LOCK_NAMES}，档案加成追加：${ks.map(k => ATTR.find(x => x.key === k).name + " +" + pendingBonus[k]).join("、")}`;
+      pendingBonus = {};
+    } else {
+      lastUnlock = `已启用 ${LOCK_NAMES}`;
+    }
+  } else if (ok && promoted){
+    lastUnlock = `${LOCK_NAMES} 已启用`;
+  } else {
+    lastUnlock = `${LOCK_NAMES} 未启用，管理岗属性晋升小队长后开放`;
+  }
+  promoted = ok;
+  return ok;
+}
+
+// ===== 结局收集册（与进度存档分离，独立持久化，通关清档不影响）=====
+const ENDINGS_KEY = "qclz_pixel_endings_v1";
+// 6 种结局：志愿者阶段 3 种 + 晋升里程碑 1 种 + 晋升路线终点 2 种
+const ENDINGS = [
+  { id:"leader_promo", group:"晋升里程碑", title:"晋升结局 · 就任小队长", badge:"badge_2", hero:"hero_v2",
+    desc:"从机械完成任务到主动体恤居民、扛起服务责任。顺利晋升网格小队小队长，解锁团队管理与月度汇报等全新剧情线。",
+    hint:"普通志愿者阶段达成晋升：公益初心≥8、居民信任≥3、且无高危事件负面处置" },
+  { id:"disqualify", group:"志愿者阶段", title:"失格结局 · 止步志愿者", badge:"badge_1", hero:"hero_v1",
+    desc:"高危事件处置失当直接一票否决，居民的信任塌掉只需要一次缺席。你仍是一名普通志愿者。",
+    hint:"普通志愿者阶段出现高危事件负面处置（如虚假保健品未上报、居民争吵时沉默）" },
+  { id:"retain", group:"志愿者阶段", title:"留任结局 · 继续观察", badge:"badge_1", hero:"hero_v1",
+    desc:"按部就班完成任务、没出过错，但缺少主动担当的实绩。留任观察一学期，下一个窗口还有机会。",
+    hint:"普通志愿者阶段未晋升、公益初心 4–7 且全程无高危负面" },
+  { id:"utilitarian", group:"志愿者阶段", title:"功利结局 · 止步志愿者", badge:"badge_1", hero:"hero_v1",
+    desc:"所有行动都围绕综测加分与节省个人时间，志愿服务仅是简历上的装饰。不满足晋升条件，停留在普通志愿者。",
+    hint:"普通志愿者阶段未晋升、公益初心 <4 且全程无高危负面" },
+  { id:"deputy", group:"晋升路线", title:"副队长任期 · 内务统筹", badge:"badge_4", hero:"hero_v3",
+    desc:"从通知别人的人变成替别人兜底的人。月报汇总成册、台账逐条质控、经验沉淀成带教手册，队伍再没因内务塌过。",
+    hint:"晋升后选择副队长路线，走完两年对内内务线任期" },
+  { id:"director", group:"晋升路线", title:"总队长任期 · 全域统筹", badge:"badge_4", hero:"hero_v4",
+    desc:"从带一组人到扛一整片社区。对接金老师、统筹会议、推动项目全域自运转，并交出三年战略提案。",
+    hint:"晋升后选择总队长路线，走完两年对外全局线任期" },
+];
+function getUnlockedEndings(){
+  try { return JSON.parse(localStorage.getItem(ENDINGS_KEY) || "[]") || []; }
+  catch (e) { return []; }
+}
+function unlockEnding(id){
+  try {
+    const arr = getUnlockedEndings();
+    if (!arr.includes(id)){ arr.push(id); localStorage.setItem(ENDINGS_KEY, JSON.stringify(arr)); }
+  } catch (e) {}
+}
+function openEndings(){
+  renderEndings();
+  show("scr-endings");
+}
+function renderEndings(){
+  const got = getUnlockedEndings();
+  const total = ENDINGS.length;
+  const cnt = $("endings-count"); if (cnt) cnt.textContent = `已解锁 ${got.length} / ${total}`;
+  const be = $("btn-endings"); if (be) be.textContent = `结局收集册（${got.length}/${total}）`;
+  const grid = $("endings-grid");
+  if (!grid) return;
+  grid.innerHTML = ENDINGS.map(e => {
+    const ok = got.includes(e.id);
+    return `<div class="ending-card ${ok ? "" : "locked"}">
+      <div class="ec-top">
+        <img class="ec-badge" src="assets/img/badges/${e.badge}.png" alt="徽章">
+        <img class="ec-hero" src="assets/img/portraits/${e.hero}.png" alt="主角">
+      </div>
+      <div class="ec-group">${e.group}</div>
+      <div class="ec-title">${e.title}</div>
+      <div class="ec-body">${ok
+        ? e.desc
+        : `<span class="ec-hint">未解锁</span><br><span class="ec-cond">解锁条件：${e.hint}</span>`}</div>
+    </div>`;
+  }).join("");
+}
+
+// 结局页「换个岗位再来一次」按钮：走完一条支线后，提示直达另一条
+function showSwitchButton(fromCh){
+  const other = fromCh === "deputy" ? "director" : "deputy";
+  const otherName = other === "director" ? "总队长" : "副队长";
+  const b = $("btn-switch");
+  b.style.display = "block";
+  b.textContent = `换个岗位再来一次 · 直达${otherName}线`;
+  b.onclick = () => switchBranch(other);
+}
+function switchBranch(other){
+  startPoint = other;
+  goCreate(true);   // 保留预选起点，进入创建页
+}
+function showEnding(){
+  clearSave();   // 走到结局即清档，封面只留「开始游戏」
+  $("btn-switch").style.display = "none";   // 默认隐藏，仅支线结局展示
+  // 副队长任期结局：对内内务线
+  if (curChapter === "deputy"){
+    unlockEnding("deputy");
+    markUnlocked("deputy");   // 解锁总队长线直达
+    $("e-badge").src = "assets/img/badges/badge_4.png";
+    $("e-hero").src = "assets/img/portraits/hero_v3.png";
+    $("e-title").textContent = "副队长任期 · 内务统筹";
+    $("e-text").textContent = "从通知别人的人，变成替别人兜底的那个。副队长两年，你把每份月报汇总成册、把台账逐条质控、把老队员的经验沉淀成带教手册。队伍再没因为内务出错塌过一次。金老师拍拍你肩：内务稳，队伍才稳。";
+    $("e-check").innerHTML =
+      `副队长任期已满 · 对内内务线：月报汇总 / 台账质控 / 经验沉淀 / 内部带教<br>` +
+      `<span style="color:var(--red)">${lastUnlock}</span>`;
+    $("e-stats").innerHTML =
+      `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${profile.major} · ${profile.grade}</div>` +
+      ATTR.map(a => `${a.name} ${state[a.key]}`).join(" ｜ ");
+    showSwitchButton("deputy");
+    show("scr-ending");
+    return;
+  }
+  // 总队长任期结局：对外全局线
+  if (curChapter === "director"){
+    unlockEnding("director");
+    markUnlocked("director");   // 解锁副队长线直达
+    $("e-badge").src = "assets/img/badges/badge_4.png";
+    $("e-hero").src = "assets/img/portraits/hero_v4.png";
+    $("e-title").textContent = "总队长任期 · 全域统筹";
+    $("e-text").textContent = "从带一组人，到扛一整片社区。总队长两年，你代表队伍对接金老师、统筹会议、把项目推到全域自运转，还交出了三年战略提案。有人问你累不累，你说：看着大家不用再等指令就往前走，这比什么都值。";
+    $("e-check").innerHTML =
+      `总队长任期已满 · 对外全局线：对接金老师 / 会议统筹 / 项目发展 / 全域自运转<br>` +
+      `<span style="color:var(--red)">${lastUnlock}</span>`;
+    $("e-stats").innerHTML =
+      `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${profile.major} · ${profile.grade}</div>` +
+      ATTR.map(a => `${a.name} ${state[a.key]}`).join(" ｜ ");
+    showSwitchButton("director");
+    show("scr-ending");
+    return;
+  }
+
+  evalPromotion();
+  const g = state.gongyi, xr = state.xinren;
+  const hasNeg = Object.values(special).some(v => v === "negative");
+  const okG = g >= PROMO.gongyi, okT = xr >= PROMO.xinren;
+
+  let title, text, badge, hero;
+  if (promoted){
+    badge = "badge_2"; hero = "hero_v2"; title = "晋升结局 · 就任小队长";
+    text = "还记得最初报名只是为了综测加分，一路走来，从机械完成任务到主动体恤居民、扛起服务责任，从只为自己，到心系社区居民。这一刻你第一次看清了自己心里那团火究竟烧得多旺，这才是青年楼长真正的成长。顺利晋升网格小队小队长，解锁团队管理、月度汇报、舆情统筹等全新剧情线。";
+  } else if (hasNeg){
+    badge = "badge_1"; hero = "hero_v1"; title = "失格结局 · 止步志愿者";
+    text = "虚假保健品在群里刷屏时你没上报，居民争吵时你选择沉默。居民的信任是一天天攒起来的，塌掉只需要一次缺席。高危事件处置失当直接一票否决，你仍然只是一名普通志愿者。";
+  } else if (g >= 4){
+    badge = "badge_1"; hero = "hero_v1"; title = "留任结局 · 继续观察";
+    text = "这一年你按部就班完成了任务，没出过错，也没留下多少让人记住的东西。考核组的评语是：态度端正，但缺少主动担当的实绩。留任观察一学期，下一个晋升窗口还有机会。";
+  } else {
+    badge = "badge_1"; hero = "hero_v1"; title = "功利结局 · 止步志愿者";
+    text = "回顾全程志愿经历，所有行动都围绕综测加分、节省个人时间展开，没有体会到服务社区的获得感，志愿服务仅仅是简历上的装饰。不满足任何晋升硬性条件，停留在普通志愿者身份，无法参与管理岗选拔。";
+  }
+  $("e-badge").src = `assets/img/badges/${badge}.png`;
+  $("e-hero").src = `assets/img/portraits/${hero}.png`;
+  $("e-title").textContent = title;
+  let eid;
+  if (promoted) eid = "leader_promo";
+  else if (hasNeg) eid = "disqualify";
+  else if (g >= 4) eid = "retain";
+  else eid = "utilitarian";
+  unlockEnding(eid);
+  $("e-text").textContent = text;
+
+  // 晋升判定明细：让玩家清楚差在哪一项
+  const mark = ok => ok
+    ? '<span style="color:var(--green)">达标</span>'
+    : '<span style="color:var(--red)">未达标</span>';
+  const heartTxt = promoted ? g : starMark(g);
+  $("e-check").innerHTML =
+    `公益初心 ${heartTxt} · ${mark(okG)}　居民信任 ${xr} · ${mark(okT)}<br>高危处置 ${hasNeg ? "有负面" : "无负面"} · ${mark(!hasNeg)}<br>` +
+    `<span style="color:${promoted ? "var(--red)" : "var(--muted)"}">${lastUnlock}</span>`;
+
+  $("e-stats").innerHTML =
+    `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${profile.major} · ${profile.grade}</div>` +
+    ATTR.map(a => {
+      const v = state[a.key];
+      let shown;
+      if (a.hidden) shown = heartTxt;
+      else if (a.locked && !promoted) shown = "未解锁";
+      else shown = v;
+      return `${a.name} ${shown}`;
+    }).join(" ｜ ");
+  renderSideHud();
+  renderProgress();
+  show("scr-ending");
+}
+
+// ===== 颁奖典礼界面（每个升职节点：就任小队长 / 副队长 / 总队长）=====
+const AWARD = {
+  leader:   {badge:"badge_2", hero:"hero_v2", kicker:"晋 升 典 礼", title:"就任小队长",
+    text:"从完成任务的志愿者，到替大家把关的小队长。金老师把印着红星的队长徽章别在你胸前，这一步，你不再是单打独斗。"},
+  deputy:   {badge:"badge_4", hero:"hero_v3", kicker:"任 职 典 礼", title:"就任副队长",
+    text:"对内把队伍带顺，是副队长的本分。徽章落定那一刻，月报、台账、带教都成了你兜底的底气。"},
+  director: {badge:"badge_4", hero:"hero_v4", kicker:"任 职 典 礼", title:"就任总队长",
+    text:"站到台前，把社区的声音传出去。总队长徽章在肩，全域自运转的路，从你手里铺开。"},
+};
+function showAward(role){
+  const d = AWARD[role] || AWARD.leader;
+  $("a-badge").src = "assets/img/badges/" + d.badge + ".png";
+  $("a-hero").src = "assets/img/portraits/" + d.hero + ".png";
+  $("a-kicker").textContent = d.kicker;
+  $("a-title").textContent = d.title;
+  $("a-text").textContent = d.text;
+  spawnConfetti();
+  renderSideHud();
+  renderProgress();
+  show("scr-award");
+  playSfx("award");
+}
+function afterAward(){
+  if (awardNext){ const f = awardNext; awardNext = null; f(); }
+}
+function spawnConfetti(){
+  const fx = $("a-fx");
+  if (!fx) return;
+  fx.innerHTML = "";
+  const cols = ["#e8503a", "#ffcb47", "#4a90c2", "#3a8f4e", "#8a6fb0"];
+  for (let i = 0; i < 18; i++){
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = (Math.random() * 100).toFixed(1) + "%";
+    c.style.background = cols[i % cols.length];
+    c.style.animationDuration = (1.6 + Math.random() * 1.4).toFixed(2) + "s";
+    c.style.animationDelay = (Math.random() * 0.7).toFixed(2) + "s";
+    fx.appendChild(c);
+  }
+}
+
+// 状态栏时钟（像素手机的小细节）
+(function(){
+  const d = new Date();
+  $("clock").textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+})();
+
+// hash 直达（调试与截图用）：
+//   #create / #story / #story-v9（跳到指定剧情）/ #result / #ending / #ending-bad
+const h = location.hash;
+if (h === "#create") goCreate();
+else if (h.indexOf("#story") === 0) {
+  startGame();
+  const want = h.indexOf("#story-") === 0 ? h.slice(7) : "";
+  if (want){
+    const id = want.replace(/-open$/, "");
+    let i = STORY.findIndex(s => s.id === id);
+    if (i < 0){
+      // 不在当前（志愿者）章：依次尝试小队长 / 副队长 / 总队长章定位，便于预览
+      const tries = [
+        ["leader", LEADER_POOL],
+        ["deputy", DEPUTY_POOL],
+        ["director", DIRECTOR_POOL],
+      ];
+      for (const [ch, pool] of tries){
+        curChapter = ch;
+        STORY = buildChapter(pool);
+        // 调试预览走整章，进度按"整章一幕"显示
+        roundNo = 1; roundTotal = 1;
+        idx = 0; special = {};
+        i = STORY.findIndex(s => s.id === id);
+        if (i >= 0) break;
+      }
+    }
+    if (i >= 0){ idx = i; renderNode(); }
+  }
+  if (h.endsWith("-open")) { enterChoose(); }
+}
+else if (h === "#result") { startGame(); choose(0); }
+else if (h.indexOf("#ending") === 0) {
+  if (h === "#ending-bad") { state.gongyi = 1; state.xinren = 2; special = {v9:"negative"}; }
+  else { state.gongyi = 9; state.xinren = 4; special = {v9:"positive", v10:"positive"}; }
+  showEnding();
+}
+else if (h.indexOf("#award") === 0) {
+  const role = h.slice(7) || "leader";
+  showAward(["leader","deputy","director"].includes(role) ? role : "leader");
+}
+else if (h === "#measure"){
+  // 调试用：把剧情屏各元素尺寸写进 title，验证 360 内容区内不溢出
+  startGame();
+  const out = [];
+  ["#scr-story .story-scroll", ".scene-frame", ".narration", ".nar-text",
+   ".thought-inline", ".tbubble", ".continue-hint", ".opts"].forEach(sel => {
+    const e = document.querySelector(sel);
+    if (!e) { out.push(sel + " MISSING"); return; }
+    const r = e.getBoundingClientRect();
+    out.push(`${sel} w=${Math.round(r.width)} h=${Math.round(r.height)} L=${Math.round(r.left)} R=${Math.round(r.right)}`);
+  });
+  const sc = document.querySelector("#scr-story .story-scroll");
+  out.push("overflowX=" + (sc.scrollWidth - sc.clientWidth));
+  document.title = "MEASURE|" + out.join(" ;; ");
+}
+
+// 宽屏辅助面板：进入任意页面前先填充一次，封面阶段也不留白
+renderSideHud();
+renderProgress();
+
+// 封面按钮按有无存档切换：无存档 →「开始游戏」；有存档 →「继续上次进度」+「重新开始」
+updateCoverButtons();
+
+// 换个岗位再来一次：载入已解锁的支线直达记录
+loadUnlocked();
+
+// 背景音乐：优先尝试自动播放，被浏览器策略拦下则等首次点击补播
+initBgm();
+
+// 音效：点击 / 颁奖 / 打字短音，默认开；首次手势即可播放，无需额外解锁
+initSfx();
+armSfxClick();
+</script>
+</body>
+</html>

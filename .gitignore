@@ -1,0 +1,21 @@
+# ===== 构建中间产物（保留 *.py 脚本与 tests，只忽略产出）=====
+_build/*.png
+_build/*.zip
+_build/fusion_full.woff2
+_build/cells.json
+_build/subset_chars.txt
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 编辑器 / IDE =====
+.vscode/
+.idea/
+*.swp
+
+# ===== 杂项 =====
+*.log
+*.bak
+*.tmp

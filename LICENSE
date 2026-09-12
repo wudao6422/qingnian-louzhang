@@ -1,0 +1,36 @@
+MIT License
+
+Copyright (c) 2026 宋婷
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------
+说明 / Scope
+--------------------------------------------------------------------
+本 MIT 许可适用于本仓库的**源代码**（index.html 中的程序逻辑、_build/ 下的
+构建脚本与测试）。
+
+以下内容不在 MIT 授权范围内，保留所有权利（All Rights Reserved）：
+
+- 游戏剧情文案（含 index.html 内嵌的剧情数据、分支文本）
+- 像素美术素材（assets/img/ 下的全部图片）
+- 音乐与音效（assets/audio/ 下的音频文件，其中 BGM 为第三方 CC-BY 作品，
+  具体授权见 README 与 THIRD-PARTY 说明）
+
+第三方资源（字体、音乐）遵循其各自的原始许可，详见 README 的「授权与致谢」。
