@@ -1844,9 +1844,9 @@ function setSfxPref(on){ try { localStorage.setItem(SFX_KEY, on ? "1" : "0"); } 
 function initSfx(){
   sfxOn = sfxPref();
   try {
-    sfxClick = new Audio("assets/audio/sfx_click.mp3"); sfxClick.volume = 0.2; sfxClick.preload = "auto";
-    sfxAward = new Audio("assets/audio/sfx_award.mp3"); sfxAward.volume = 0.5; sfxAward.preload = "auto";
-    sfxType  = new Audio("assets/audio/sfx_type.mp3");  sfxType.volume  = 0.15; sfxType.preload = "auto";
+    sfxClick = new Audio("assets/audio/sfx_click.wav"); sfxClick.volume = 0.2; sfxClick.preload = "auto";
+    sfxAward = new Audio("assets/audio/sfx_award.wav"); sfxAward.volume = 0.5; sfxAward.preload = "auto";
+    sfxType  = new Audio("assets/audio/sfx_type.wav");  sfxType.volume  = 0.15; sfxType.preload = "auto";
     // 预热打字音：提前解码，避免首字出现时声音还没准备好导致整体滞后
     try { sfxType.load && sfxType.load(); } catch (e) {}
   } catch (e) { sfxClick = sfxAward = sfxType = null; }
@@ -1855,7 +1855,7 @@ function initSfx(){
   paintSfx();
 }
 
-// ---- 打字音的 Web Audio 精确播放：裁掉 mp3 前导静音，逐字零延迟触发 ----
+// ---- 打字音的 Web Audio 精确播放：裁掉音频前导静音，逐字零延迟触发 ----
 let sfxTypeBuf = null;     // 解码并裁剪后的 AudioBuffer
 let _sfxCtx = null;        // 共享 AudioContext
 const _SFX_TRIM_TH = 0.01; // 静音判定阈值
@@ -1890,11 +1890,11 @@ function decodeSfxType(){
   const ctx = getSfxCtx();
   if (!ctx) return;
   try {
-    fetch("assets/audio/sfx_type.mp3")
-      .then(r => r.arrayBuffer())
+    fetch("assets/audio/sfx_type.wav")
+      .then(r => { if (!r.ok) throw new Error("sfx missing"); return r.arrayBuffer(); })
       .then(ab => ctx.decodeAudioData(ab))
       .then(buf => { sfxTypeBuf = trimSfxBuffer(buf); })
-      .catch(() => { sfxTypeBuf = null; });
+      .catch(() => { sfxTypeBuf = null; });   // 文件缺失或解码失败：静默降级，不报错
   } catch (e) { sfxTypeBuf = null; }
 }
 

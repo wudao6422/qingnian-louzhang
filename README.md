@@ -101,7 +101,7 @@ python -m http.server 8000
 | 剧情文案、像素美术 | 保留所有权利（All Rights Reserved） |
 | 字体 Fusion Pixel Font | SIL Open Font License 1.1，见 [assets/font/OFL.txt](assets/font/OFL.txt) |
 | 背景音乐 | Kevin MacLeod (incompetech.com)，CC BY 4.0，需署名 |
-| 音效 | 见下方说明 |
+| 音效 | 本项目自制（程序化合成），版权归作者 |
 
 **字体**：本作使用 [Fusion Pixel Font](https://github.com/TakWolf/fusion-pixel-font)（作者 TakWolf），基于 SIL OFL 1.1 使用并按游戏用字做了子集化。子集字体与完整授权文本一并附在 `assets/font/` 下。
 
@@ -111,7 +111,7 @@ python -m http.server 8000
 > Licensed under Creative Commons: By Attribution 4.0 License
 > https://creativecommons.org/licenses/by/4.0/
 
-**音效**：点击、颁奖、打字三类短音效，随本作一并发布，仅用于本作的交互反馈。
+**音效**：点击、颁奖、打字三类 8-bit 风格音效，由 `_build/make_sfx.py` **程序化合成**（方波叠加噪声，22050Hz 单声道），不使用任何第三方素材，版权归本作作者。三个文件合计约 29KB。想换音色可重跑该脚本，可调项见脚本头部注释。
 
 （若替换任意素材，请同步更新此处署名与上方授权表格。）
 
