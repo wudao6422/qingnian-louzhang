@@ -111,7 +111,7 @@ python -m http.server 8000
 > Licensed under Creative Commons: By Attribution 4.0 License
 > https://creativecommons.org/licenses/by/4.0/
 
-**音效**：点击、颁奖、打字三类 8-bit 风格音效，由 `_build/make_sfx.py` **程序化合成**（方波叠加噪声，22050Hz 单声道），不使用任何第三方素材，版权归本作作者。三个文件合计约 29KB。想换音色可重跑该脚本，可调项见脚本头部注释。
+**音效**：点击、颁奖、打字三类木质敲击风格音效，由 `_build/make_sfx.py` **程序化合成**（非谐分音叠加带通噪声瞬态，22050Hz 单声道），不使用任何第三方素材，版权归本作作者。三个文件合计约 41KB。想换音色可重跑该脚本，可调项见脚本头部注释。
 
 （若替换任意素材，请同步更新此处署名与上方授权表格。）
 

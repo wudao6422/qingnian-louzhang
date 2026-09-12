@@ -1844,9 +1844,10 @@ function setSfxPref(on){ try { localStorage.setItem(SFX_KEY, on ? "1" : "0"); } 
 function initSfx(){
   sfxOn = sfxPref();
   try {
-    sfxClick = new Audio("assets/audio/sfx_click.wav"); sfxClick.volume = 0.2; sfxClick.preload = "auto";
-    sfxAward = new Audio("assets/audio/sfx_award.wav"); sfxAward.volume = 0.5; sfxAward.preload = "auto";
-    sfxType  = new Audio("assets/audio/sfx_type.wav");  sfxType.volume  = 0.15; sfxType.preload = "auto";
+    // 音量比 8-bit 版略高：木质音色是正弦叠加，同峰值下能量密度低于方波，听感偏轻
+    sfxClick = new Audio("assets/audio/sfx_click.wav"); sfxClick.volume = 0.26; sfxClick.preload = "auto";
+    sfxAward = new Audio("assets/audio/sfx_award.wav"); sfxAward.volume = 0.55; sfxAward.preload = "auto";
+    sfxType  = new Audio("assets/audio/sfx_type.wav");  sfxType.volume  = 0.19; sfxType.preload = "auto";
     // 预热打字音：提前解码，避免首字出现时声音还没准备好导致整体滞后
     try { sfxType.load && sfxType.load(); } catch (e) {}
   } catch (e) { sfxClick = sfxAward = sfxType = null; }
@@ -1906,7 +1907,7 @@ function playTypeSfx(){
       const src = ctx.createBufferSource();
       src.buffer = sfxTypeBuf;
       const g = ctx.createGain();
-      g.gain.value = 0.15;
+      g.gain.value = 0.19;
       src.connect(g).connect(ctx.destination);
       src.start();
       return true;
