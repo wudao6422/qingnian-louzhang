@@ -459,11 +459,18 @@
   ::-webkit-scrollbar-track{background:var(--paper2)}
   ::-webkit-scrollbar-thumb{background:var(--line); border:2px solid var(--paper2)}
   /* 宽屏时手机居中即可（响应式容器后续再加侧面板） */
+  /* 手机档：铺满视口，但保留手机轮廓（外框厚度 / 圆角 / 听筒 / 内屏描边）。
+     高度用 dvh 让底部圆角不被移动端地址栏遮住；不支持 dvh 的浏览器退回 vh。
+     外描边改用 inset，否则 100vw 宽度下 3px 外描边会被视口边缘裁成一半。 */
   @media (max-width:430px){
-    body{align-items:flex-start}
-    .phone{width:100vw; height:100vh; border-radius:0; padding:0; box-shadow:none}
-    .phone::before{display:none}
-    .screen{width:100%; height:100%; border:none; border-radius:0}
+    body{align-items:center}
+    .phone{
+      width:100vw; height:100vh; height:100dvh;
+      padding:13px 12px; border-radius:24px;
+      box-shadow:inset 0 0 0 2px #3a2e2a;
+    }
+    .phone::before{display:block; top:4px; width:52px; height:4px}
+    .screen{width:100%; height:100%; border:2px solid var(--line); border-radius:9px}
   }
 
   /* ===== 宽屏辅助面板（>900px 才出现；手机/平板内容区保持原生尺寸，绝不放大） ===== */
