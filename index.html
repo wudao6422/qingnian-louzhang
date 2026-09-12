@@ -412,13 +412,47 @@
   .r-sum .sum-row .ok{color:var(--green)}
   .r-sum .sum-row .no{color:var(--red)}
   .r-sum .sum-row .star-meter{line-height:17px}
+  /* ===== 节点间短事件：轻量过渡，不弹属性、不即时评价 ===== */
+  #scr-short{align-items:center; justify-content:center; padding:0 14px; overflow:auto}
+  .short-card{
+    width:100%; max-width:320px; background:var(--card); border:3px solid var(--line);
+    padding:12px 12px 10px; box-shadow:4px 4px 0 rgba(0,0,0,.18);
+  }
+  .sh-tag{
+    display:inline-block; background:var(--paper2); border:2px solid var(--line);
+    font-size:10px; line-height:15px; padding:0 6px; color:var(--muted); margin-bottom:8px;
+  }
+  .sh-desc{font-size:12px; line-height:19px; color:var(--ink); margin-bottom:10px}
+  .sh-acts{display:flex; flex-direction:column; gap:6px}
+  .sh-act{
+    background:var(--paper2); border:2px solid var(--line); color:var(--ink);
+    font:inherit; font-size:12px; line-height:17px; padding:6px 8px;
+    text-align:left; cursor:pointer;
+  }
+  .sh-act:active{background:var(--red); color:#fff}
+  .sh-foot{color:var(--muted); font-size:10px; line-height:14px; margin-top:9px; text-align:center}
+  /* ===== 章末日志：把隐藏记录还给你 ===== */
+  #scr-log{align-items:center; justify-content:center; padding:0 14px; overflow:auto}
+  .log-paper{
+    width:100%; max-width:320px; background:var(--card); border:3px solid var(--line);
+    padding:12px 12px 10px; box-shadow:4px 4px 0 rgba(0,0,0,.18);
+  }
+  .log-head{
+    font-size:12px; line-height:18px; color:var(--ink);
+    border-bottom:2px dashed var(--line); padding-bottom:7px; margin-bottom:9px;
+  }
+  .log-body{font-size:12px; line-height:20px; color:var(--ink)}
+  .log-body .lg{opacity:0; animation:lgin .3s steps(3) forwards}
+  @keyframes lgin{to{opacity:1}}
+  .log-sign{color:var(--muted); font-size:10px; line-height:16px; margin-top:10px}
+  .log-paper .pbtn{margin-top:12px}
   /* ===== 结局屏 ===== */
   #scr-ending{align-items:center; text-align:center; padding:14px 14px; overflow-y:auto}
   #scr-ending .badge-img{width:64px; height:64px; margin:10px 0 6px}
   #scr-ending h1{font-size:24px; line-height:30px; margin:6px 0 10px}
   #scr-ending .ending-text{
     background:var(--card); border:3px solid var(--line); padding:10px 12px;
-    text-align:left; line-height:20px; margin-bottom:10px; max-width:320px;
+    text-align:left; white-space:pre-line; line-height:20px; margin-bottom:10px; max-width:320px;
   }
   #scr-ending .final-stats{color:var(--muted); margin-bottom:12px; line-height:20px}
 #scr-ending .promo-check{
@@ -682,6 +716,26 @@
       <div class="r-foot" data-page-node-id="A1ZklDHyL3r4zU6wPsvAfT"><button class="pbtn blue" id="r-next" onclick="nextNode()" data-page-node-id="TDRzpIBV8SueNWcsi8xlt9">继续 →</button></div>
     </section>
 
+    <!-- 屏 3.5：节点间短事件（轻量过渡） -->
+    <section class="page" id="scr-short">
+      <div class="short-card">
+        <span class="sh-tag" id="sh-tag">日常</span>
+        <div class="sh-desc" id="sh-desc"></div>
+        <div class="sh-acts" id="sh-acts"></div>
+        <div class="sh-foot">选一个动作 · 不给提示，也不评价</div>
+      </div>
+    </section>
+
+    <!-- 屏 3.6：章末日志 -->
+    <section class="page" id="scr-log">
+      <div class="log-paper">
+        <div class="log-head" id="log-head">本月 · 日志</div>
+        <div class="log-body" id="log-body"></div>
+        <div class="log-sign" id="log-sign"></div>
+        <button class="pbtn" id="log-next">收起日志 →</button>
+      </div>
+    </section>
+
     <!-- 屏 4：结局 -->
     <section class="page" id="scr-ending" data-page-node-id="ZLz7z9XgEMwDqZX1ayzLHh">
       <img class="badge-img" id="e-badge" src="assets/img/badges/badge_1.png" alt="徽章" data-page-node-id="sDH3s0jMFdqOqh5uBRM9cv">
@@ -753,7 +807,10 @@ const LOCK_NAMES = ATTR.filter(a => a.locked).map(a => a.name).join(" / ");
 let state = {};
 ATTR.forEach(a => state[a.key] = a.hidden ? 0 : 2);
 // 清掉上一周目残留属性，开新档时回到干净基线
-function resetState(){ ATTR.forEach(a => state[a.key] = a.hidden ? 0 : 2); }
+function resetState(){
+  ATTR.forEach(a => state[a.key] = a.hidden ? 0 : 2);
+  marks = {}; marksAll = {}; shortSeen = []; shortQueue = []; logHistory = []; curShort = null;
+}
 // 是否已晋升小队长（决定三项管理属性是否启用）
 let promoted = false;
 // 当前 HUD 可见的属性
@@ -787,6 +844,149 @@ function starMark(v){
 }
 
 // ===== 节点类型（沿用 青春楼.html 的四类节点划分）=====
+// ===== 节点间短事件池（首轮 45 条）=====
+// 只记隐藏细节，不弹属性、不即时评价、不影响晋升。ch = 可出现的章节，night = 深夜场景
+const SHORT_POOL = [
+  { id:"k01", tag:"转发推文", ch:["volunteer"], night:false,
+    desc:"小队长发了《秋冬季防火须知》，配一句「大家转发一下」。你正赶着上晚课。",
+    acts:[{t:"直接转发，回个「已转」", m:"fwd_direct"},{t:"先点开看一眼再转", m:"fwd_check"},{t:"划过去，下课再说", m:"fwd_skip"}] },
+  { id:"k02", tag:"转发推文", ch:["volunteer","leader"], night:true,
+    desc:"晚上十一点，群里又来一条推文，只有三个人转了。",
+    acts:[{t:"跟着转，早点睡", m:"fwd_direct"},{t:"点开看完再转", m:"fwd_check"},{t:"明天再说", m:"fwd_skip"}] },
+  { id:"k03", tag:"搜集科普", ch:["volunteer"], night:false,
+    desc:"这周轮到你搜集科普素材，今晚就要交。",
+    acts:[{t:"翻官方号找最新的", m:"src_open"},{t:"把上个月的改个标题", m:"src_copy"},{t:"随手搜一条交差", m:"src_skip"}] },
+  { id:"k04", tag:"网格群消息", ch:["volunteer"], night:false,
+    desc:"早八课前，群里 99+。",
+    acts:[{t:"从头翻一遍", m:"read_care"},{t:"快速刷到顶", m:"read_skim"},{t:"直接清空未读", m:"read_skip"}] },
+  { id:"k05", tag:"网格群消息", ch:["volunteer","leader"], night:false,
+    desc:"你刷到一条独居老人求助，手指已经划过去了。",
+    acts:[{t:"翻回去看", m:"back_scroll"},{t:"立刻上报小队长", m:"rep_now"},{t:"继续往下刷", m:"read_skim"}] },
+  { id:"k06", tag:"上报舆情", ch:["volunteer"], night:true,
+    desc:"有人往群里发了不实保健品广告，还附了链接。",
+    acts:[{t:"立刻截图上报", m:"rep_now"},{t:"先记着，明早再说", m:"rep_wait"},{t:"等别人处理", m:"rep_none"}] },
+  { id:"k07", tag:"居民互动", ch:["volunteer"], night:false,
+    desc:"三号楼李阿姨在群里问：楼道灯坏了找谁？",
+    acts:[{t:"回她具体流程", m:"reply_resident"},{t:"回一句「我帮您问问」", m:"hand_off"},{t:"装没看见", m:"ignore_resident"}] },
+  { id:"k08", tag:"学业冲突", ch:["volunteer","leader"], night:false,
+    desc:"明天两门专业课连考，今晚还得交周报。",
+    acts:[{t:"先把周报交了再复习", m:"duty_first"},{t:"先复习，周报明早补", m:"study_first"},{t:"两边都拖到最后一刻", m:"both_late"}] },
+  { id:"k09", tag:"内心时刻", ch:["volunteer"], night:false,
+    desc:"转发完今天的第 12 条，你盯着自己的聊天框看了一会儿。",
+    acts:[{t:"觉得总有人会看到", m:"inner_yes"},{t:"不确定有没有意义", m:"inner_doubt"},{t:"没什么感觉", m:"inner_numb"}] },
+  { id:"k10", tag:"群聊", ch:["volunteer"], night:false,
+    desc:"群里聊起周末线下团建，你一次都没去过。",
+    acts:[{t:"接一句「下次一定去」", m:"chat_join"},{t:"看着不说话", m:"chat_lurk"},{t:"屏蔽这个群", m:"chat_away"}] },
+  { id:"k11", tag:"招新", ch:["volunteer","leader"], night:false,
+    desc:"群里进了两个新志愿者头像，没人说话。",
+    acts:[{t:"主动 @ 打个招呼", m:"recruit_push"},{t:"等别人先招呼", m:"recruit_wait"},{t:"没管", m:"recruit_none"}] },
+  { id:"k12", tag:"居民互动", ch:["volunteer"], night:false,
+    desc:"有人 @ 你问社区活动怎么报名，你其实也不清楚。",
+    acts:[{t:"去翻公告查清楚再回", m:"reply_resident"},{t:"回「我帮您问问」", m:"hand_off"},{t:"没回", m:"ignore_resident"}] },
+
+  { id:"k13", tag:"转发推文", ch:["leader"], night:false,
+    desc:"现在轮到你给组员分转发任务了。",
+    acts:[{t:"自己先看一遍再分", m:"fwd_check"},{t:"直接转下去", m:"fwd_direct"},{t:"让他们自己看着办", m:"fwd_skip"}] },
+  { id:"k14", tag:"上报舆情", ch:["leader"], night:false,
+    desc:"组员上报了一条，写得含糊，看不出重点。",
+    acts:[{t:"追问清楚再报", m:"rep_now"},{t:"自己去查证补全", m:"src_open"},{t:"就这样交上去", m:"rep_wait"}] },
+  { id:"k15", tag:"搜集科普", ch:["leader"], night:false,
+    desc:"组员交上来的素材里错了两个字，你发现了。",
+    acts:[{t:"去查原文确认", m:"src_open"},{t:"按经验改掉", m:"src_copy"},{t:"先发出去再说", m:"src_skip"}] },
+  { id:"k16", tag:"网格群消息", ch:["leader"], night:true,
+    desc:"深夜十一点半，你习惯性地打开网格群。",
+    acts:[{t:"从头翻一遍", m:"read_care"},{t:"快速刷一眼", m:"read_skim"},{t:"看完 @ 我的就退出", m:"read_skip"}] },
+  { id:"k17", tag:"居民互动", ch:["leader"], night:false,
+    desc:"居民在群里抱怨楼道堆物，语气很冲。",
+    acts:[{t:"先共情再解释", m:"reply_resident"},{t:"转给社区对接人", m:"hand_off"},{t:"等他气消", m:"ignore_resident"}] },
+  { id:"k18", tag:"学业冲突", ch:["leader"], night:false,
+    desc:"期中考周，队里刚好要交月报汇总。",
+    acts:[{t:"熬夜两边都做完", m:"duty_first"},{t:"先考试，月报请组员代交", m:"study_first"},{t:"两边都迟了", m:"both_late"}] },
+  { id:"k19", tag:"招新", ch:["leader"], night:false,
+    desc:"队里要招新，金老师让你发帖。",
+    acts:[{t:"认真写一份招募文案", m:"recruit_push"},{t:"转发去年的", m:"recruit_wait"},{t:"拖着没发", m:"recruit_none"}] },
+  { id:"k20", tag:"换届", ch:["leader"], night:false,
+    desc:"群里有人提换届的事，说总队长先换。",
+    acts:[{t:"认真问清楚流程", m:"handover_care"},{t:"随口应一句", m:"handover_rush"},{t:"没接话", m:"handover_none"}] },
+  { id:"k21", tag:"内心时刻", ch:["leader"], night:false,
+    desc:"你发现自己在转发时，已经不再点开原文了。",
+    acts:[{t:"有点不安，重新点开", m:"inner_yes"},{t:"觉得这样效率高", m:"inner_numb"},{t:"怀疑这些有没有人看", m:"inner_doubt"}] },
+  { id:"k22", tag:"群聊", ch:["leader"], night:false,
+    desc:"老队员在群里开玩笑，新来的不敢接话。",
+    acts:[{t:"带新人接一句", m:"chat_join"},{t:"看着", m:"chat_lurk"},{t:"没看", m:"chat_away"}] },
+  { id:"k23", tag:"上报舆情", ch:["leader"], night:false,
+    desc:"群里出现一条外地传言，你判断是假的。",
+    acts:[{t:"立刻做辟谣科普", m:"rep_now"},{t:"上报等指示", m:"rep_wait"},{t:"觉得会自己平息", m:"rep_none"}] },
+  { id:"k24", tag:"居民互动", ch:["leader"], night:true,
+    desc:"晚上十点，有居民在群里问明天还办公吗。",
+    acts:[{t:"查完公告回他", m:"reply_resident"},{t:"说明天帮您问", m:"hand_off"},{t:"第二天才看到", m:"ignore_resident"}] },
+
+  { id:"k25", tag:"内务汇总", ch:["deputy"], night:false,
+    desc:"各小队月报交上来，格式全不一样。",
+    acts:[{t:"统一模板逐项核对", m:"src_open"},{t:"照抄着汇总", m:"src_copy"},{t:"先交上去再说", m:"src_skip"}] },
+  { id:"k26", tag:"换届", ch:["deputy"], night:false,
+    desc:"你要把手上的台账交给下一任。",
+    acts:[{t:"整理成一份文档", m:"handover_care"},{t:"直接打包发过去", m:"handover_rush"},{t:"拖到最后一天", m:"handover_none"}] },
+  { id:"k27", tag:"带教", ch:["deputy"], night:false,
+    desc:"新志愿者问你：怎么判断一条消息是不是谣言？",
+    acts:[{t:"一步步教他", m:"recruit_push"},{t:"丢一份手册给他", m:"recruit_wait"},{t:"让他自己搜", m:"recruit_none"}] },
+  { id:"k28", tag:"学业冲突", ch:["deputy"], night:false,
+    desc:"期末论文和队里换届撞在一起。",
+    acts:[{t:"先做完交接", m:"duty_first"},{t:"先写论文", m:"study_first"},{t:"两边都压缩", m:"both_late"}] },
+  { id:"k29", tag:"内心时刻", ch:["deputy"], night:false,
+    desc:"你翻到自己一年前的转发记录。",
+    acts:[{t:"觉得自己变认真了", m:"inner_yes"},{t:"觉得只是熟练了", m:"inner_numb"},{t:"怀疑这些有没有用", m:"inner_doubt"}] },
+  { id:"k30", tag:"网格群消息", ch:["deputy"], night:false,
+    desc:"你现在会固定每晚看一次群。",
+    acts:[{t:"逐条看", m:"read_care"},{t:"扫一眼", m:"read_skim"},{t:"只看未读数字", m:"read_skip"}] },
+  { id:"k31", tag:"居民互动", ch:["deputy"], night:false,
+    desc:"有居民记得你，群里 @ 你问去年的事。",
+    acts:[{t:"翻记录回答", m:"reply_resident"},{t:"转给对接人", m:"hand_off"},{t:"已读不回", m:"ignore_resident"}] },
+  { id:"k32", tag:"上报舆情", ch:["deputy"], night:false,
+    desc:"一条高危舆情，今天你值班。",
+    acts:[{t:"立刻按流程上报", m:"rep_now"},{t:"先核实再报", m:"rep_wait"},{t:"交给小队长", m:"rep_none"}] },
+  { id:"k33", tag:"群聊", ch:["deputy"], night:false,
+    desc:"换届后，群里少了一半人说话。",
+    acts:[{t:"主动抛个话题", m:"chat_join"},{t:"看着", m:"chat_lurk"},{t:"已经很少打开", m:"chat_away"}] },
+  { id:"k34", tag:"招新", ch:["deputy"], night:false,
+    desc:"新一届招新，报名的人比去年少。",
+    acts:[{t:"逐个私聊邀请", m:"recruit_push"},{t:"群里发个通知", m:"recruit_wait"},{t:"顺其自然", m:"recruit_none"}] },
+
+  { id:"k35", tag:"对外联络", ch:["director"], night:false,
+    desc:"要跟社区对接明年的事，你还没见过对方。",
+    acts:[{t:"提前准备提纲再打过去", m:"handover_care"},{t:"直接打过去", m:"handover_rush"},{t:"等对方找你", m:"handover_none"}] },
+  { id:"k36", tag:"转发推文", ch:["director"], night:false,
+    desc:"你定的规矩是转发前必须看原文。你自己做到了吗？",
+    acts:[{t:"每次都看", m:"fwd_check"},{t:"忙起来就忘了", m:"fwd_direct"},{t:"已经很久没亲自转", m:"fwd_skip"}] },
+  { id:"k37", tag:"学业冲突", ch:["director"], night:false,
+    desc:"秋招、考研，和队里的事撞在一起。",
+    acts:[{t:"把队里排在前面", m:"duty_first"},{t:"把学业排在前面", m:"study_first"},{t:"两边都应付", m:"both_late"}] },
+  { id:"k38", tag:"换届", ch:["director"], night:false,
+    desc:"你要给下一任总队长写交接。",
+    acts:[{t:"写成一份战略提案", m:"handover_care"},{t:"列个清单", m:"handover_rush"},{t:"口头说说", m:"handover_none"}] },
+  { id:"k39", tag:"内心时刻", ch:["director"], night:false,
+    desc:"有人问你：做这些图什么？",
+    acts:[{t:"说得出来", m:"inner_yes"},{t:"说不清", m:"inner_doubt"},{t:"笑一下", m:"inner_numb"}] },
+  { id:"k40", tag:"网格群消息", ch:["director"], night:false,
+    desc:"你已经三个月没在群里说过话。",
+    acts:[{t:"逐条看", m:"read_care"},{t:"扫一眼", m:"read_skim"},{t:"交给副队长看", m:"read_skip"}] },
+  { id:"k41", tag:"上报舆情", ch:["director"], night:false,
+    desc:"出现了你任内最严重的一条舆情。",
+    acts:[{t:"第一时间按流程上报", m:"rep_now"},{t:"先想清楚口径", m:"rep_wait"},{t:"交给副队长", m:"rep_none"}] },
+  { id:"k42", tag:"招新", ch:["director"], night:false,
+    desc:"队伍要扩大到下一个社区。",
+    acts:[{t:"亲自去宣讲", m:"recruit_push"},{t:"发个通知", m:"recruit_wait"},{t:"交给别人招", m:"recruit_none"}] },
+  { id:"k43", tag:"居民互动", ch:["director"], night:false,
+    desc:"有居民说：你们换得太快，刚熟就走了。",
+    acts:[{t:"认真解释回访机制", m:"reply_resident"},{t:"说会反馈上去", m:"hand_off"},{t:"没接话", m:"ignore_resident"}] },
+  { id:"k44", tag:"群聊", ch:["director"], night:false,
+    desc:"老队员群里有人说舍不得。",
+    acts:[{t:"回一句", m:"chat_join"},{t:"看着", m:"chat_lurk"},{t:"没看", m:"chat_away"}] },
+  { id:"k45", tag:"内心时刻", ch:["director"], night:true,
+    desc:"深夜整理三年记录，你看到自己第一次转发的那条。",
+    acts:[{t:"觉得这一路值得", m:"inner_yes"},{t:"说不上来", m:"inner_doubt"},{t:"只有累", m:"inner_numb"}] },
+];
+
 const NODE_TYPE = {
   daily:         {label:"日常循环",     trig:"每日登录自动触发"},
   monthly:       {label:"月度随机",     trig:"月度任务随机触发"},
@@ -2010,6 +2210,7 @@ function saveGame(){
       pendingBranch,                 // 二选一暂存（若在 branch 幕）
       onResult,                      // 是否停在结算页（已选完、待推进）
       lastPick,                      // 结算页对应的选项序号（-1 表示无）
+      marks, marksAll, shortSeen,    // 隐藏细节记录（本章 / 全程 / 已用短事件）
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   } catch (e) { /* 隐私模式 / 配额满：静默失败，不影响游戏 */ }
@@ -2049,6 +2250,9 @@ function resumeGame(){
   pendingBranch = data.pendingBranch || "";
   onResult      = !!data.onResult;
   lastPick      = (typeof data.lastPick === "number") ? data.lastPick : -1;
+  marks         = data.marks || {};
+  marksAll      = data.marksAll || {};
+  shortSeen     = data.shortSeen || [];
   // 2. 二选一幕：直接还原单节点，不涉及队列
   if (curChapter === "branch"){
     chapterQueue = [];
@@ -2263,45 +2467,201 @@ function startBranch(){
   saveGame();
 }
 
+// ===== 节点间短事件 / 章末日志 =====
+// 只记细节、不做评价：不弹属性、不改数值、不影响晋升判定
+let marks = {};        // 本章隐藏细节计数（章末清零）
+let marksAll = {};     // 全程累计（供结局摘录）
+let shortSeen = [];    // 已出现过的短事件 id（防重复）
+let shortQueue = [];   // 待播放的短事件 id
+let shortDone = null;  // 短事件播完后的回调
+let shortT0 = 0;       // 当前短事件开始时刻（用于记犹豫时长）
+let curShort = null;
+let logNext = null;    // 日志「收起」后的回调
+let logHistory = [];   // 各章日志（备查）
+
+const CHAPTER_MONTH = { volunteer:"十月", leader:"十一月", deputy:"十二月", director:"十二月" };
+
+function bump(k, n){
+  n = n || 1;
+  marks[k] = (marks[k] || 0) + n;
+  marksAll[k] = (marksAll[k] || 0) + n;
+}
+
+// 两个主线节点之间：随机 1~3 个短事件
+function pickShorts(chapter){
+  const pool = SHORT_POOL.filter(s => s.ch.includes(chapter) && !shortSeen.includes(s.id));
+  if (!pool.length) return [];
+  const n = Math.min(pool.length, 1 + Math.floor(Math.random() * 3));
+  return shuffle(pool).slice(0, n).map(s => s.id);   // 队列存 id，读档也轻量
+}
+
+function startShorts(done){
+  shortQueue = pickShorts(curChapter);
+  shortDone = done;
+  if (!shortQueue.length){ done(); return; }
+  renderShort();
+}
+
+function renderShort(){
+  const ev = SHORT_POOL.find(s => s.id === shortQueue[0]);
+  if (!ev){ finishShorts(); return; }
+  curShort = ev;
+  $("sh-tag").textContent = ev.tag + (ev.night ? " · 很晚了" : "");
+  $("sh-desc").textContent = ev.desc;
+  $("sh-acts").innerHTML = ev.acts.map((a, i) =>
+    `<button class="sh-act" onclick="pickShort(${i})">${a.t}</button>`).join("");
+  shortT0 = Date.now();
+  show("scr-short");
+}
+
+function pickShort(i){
+  const ev = curShort; if (!ev) return;
+  const a = ev.acts[i]; if (!a) return;
+  const dwell = Date.now() - shortT0;
+  bump(a.m);
+  if (ev.night) bump("night_" + a.m);        // 深夜发生的，单独记一笔
+  if (dwell >= 4000){                        // 停超过 4 秒 = 犹豫过
+    bump("hesitate");
+    marks.hesitate_ms = (marks.hesitate_ms || 0) + dwell;
+    marksAll.hesitate_ms = (marksAll.hesitate_ms || 0) + dwell;
+  }
+  bump("done");                              // 本章出现次数
+  shortSeen.push(ev.id);
+  shortQueue.shift();
+  saveGame();
+  if (shortQueue.length) renderShort(); else finishShorts();
+}
+
+function finishShorts(){
+  curShort = null;
+  const d = shortDone; shortDone = null;
+  if (d) d();
+}
+
+// 章末日志：把隐藏记录还给你
+function buildLog(){
+  const g = k => marks[k] || 0;
+  const L = [];
+  const total = g("done");
+  if (!total) return L;
+  L.push(`这个月，你在群里出现过 ${total} 次。`);
+  const fwd = g("fwd_direct") + g("fwd_check") + g("fwd_skip");
+  if (fwd >= 2){
+    const blind = g("fwd_direct") + g("fwd_skip");
+    L.push(`你转发过 ${fwd} 条推文${blind ? `，其中 ${blind} 条没点开过原文` : "，每一条都点开看过"}。`);
+  }
+  const src = g("src_open") + g("src_copy") + g("src_skip");
+  if (src >= 2) L.push(`搜集科普 ${src} 次，${g("src_open")} 次是自己找的来源。`);
+  const skim = g("read_skim") + g("read_skip");
+  if (skim + g("read_care") >= 2) L.push(`你刷过 ${skim} 次群消息，认真从头翻过 ${g("read_care")} 次。`);
+  if (g("back_scroll")) L.push(`有 ${g("back_scroll")} 次，你划过去了又翻回来。`);
+  const rep = g("rep_now") + g("rep_wait"), nrep = g("rep_none");
+  if (rep + nrep >= 1){
+    let s = `你上报过 ${rep} 次`;
+    if (nrep) s += `，还有 ${nrep} 次你选择等别人先动`;
+    const nr = g("night_rep_now") + g("night_rep_wait");
+    if (nr) s += `；其中 ${nr} 次是在深夜`;
+    L.push(s + "。");
+  }
+  if (g("reply_resident") + g("ignore_resident") >= 1)
+    L.push(`你回过 ${g("reply_resident")} 位居民的话，${g("ignore_resident")} 次装作没看见。`);
+  if (g("recruit_push")) L.push(`你主动招呼过 ${g("recruit_push")} 个新人。`);
+  if (g("handover_care") + g("handover_rush") + g("handover_none") >= 1)
+    L.push(`换届这件事，你认真处理过 ${g("handover_care")} 次，敷衍过 ${g("handover_rush")} 次。`);
+  if (g("duty_first") + g("study_first") + g("both_late") >= 1)
+    L.push(`学业和队里撞车时，${g("duty_first")} 次你先顾队里，${g("study_first")} 次你先顾自己。`);
+  if (g("inner_yes") + g("inner_doubt") + g("inner_numb") >= 1)
+    L.push(`有 ${g("inner_yes")} 次你觉得这件事有意义，${g("inner_doubt")} 次你在心里打了个问号。`);
+  if (g("hesitate"))
+    L.push(`有 ${g("hesitate")} 次你在选项前停了超过 4 秒，加起来 ${Math.round((marks.hesitate_ms || 0) / 1000)} 秒。`);
+  return L;
+}
+
+function logSign(){
+  const g = k => marks[k] || 0;
+  const machine   = g("fwd_direct") + g("fwd_skip") + g("src_copy") + g("src_skip") + g("read_skim") + g("read_skip");
+  const careful   = g("fwd_check") + g("src_open") + g("read_care") + g("rep_now") + g("reply_resident") + g("back_scroll");
+  const bystander = g("ignore_resident") + g("chat_lurk") + g("chat_away") + g("rep_none") + g("recruit_none");
+  if (careful > 0 && careful >= machine && careful >= bystander) return "你把别人的事，当成过自己的事。";
+  if (bystander > careful && bystander >= machine) return "你一直在外面看着，包括看着你自己。";
+  return "你在群里，但你不在那个社区里。";
+}
+
+function maybeShowLog(chapter, next){
+  const lines = buildLog();
+  if (!lines.length){ next(); return; }
+  $("log-head").textContent = `${CHAPTER_MONTH[chapter] || "本月"} · 日志`;
+  $("log-body").innerHTML = lines.map((t, i) =>
+    `<div class="lg" style="animation-delay:${(i * 0.18).toFixed(2)}s">${t}</div>`).join("");
+  $("log-sign").textContent = "——" + logSign();
+  logHistory.push({ chapter, lines, sign: logSign() });
+  logNext = next;
+  $("log-next").onclick = () => {
+    const f = logNext; logNext = null;
+    marks = {};                    // 章末清零，下一章重新记
+    if (f) f();
+  };
+  show("scr-log");
+}
+
+// 结局摘录：三年下来最扎眼的几笔
+function endingExcerpt(){
+  const g = k => marksAll[k] || 0;
+  const out = [];
+  const fwd = g("fwd_direct") + g("fwd_check") + g("fwd_skip");
+  if (fwd) out.push(`你一共转发过 ${fwd} 条推文，其中 ${g("fwd_direct") + g("fwd_skip")} 条没点开过原文。`);
+  if (g("reply_resident")) out.push(`你回答过 ${g("reply_resident")} 位居民的问题，也有 ${g("ignore_resident")} 次装作没看见。`);
+  if (g("rep_now") + g("rep_wait")) out.push(`你上报过 ${g("rep_now") + g("rep_wait")} 次，${g("rep_none")} 次你等着别人先动。`);
+  if (g("hesitate")) out.push(`有 ${g("hesitate")} 次，你在两个选项之间停了超过 4 秒。`);
+  if (g("inner_doubt")) out.push(`你怀疑过 ${g("inner_doubt")} 次这件事有没有意义，还是转了。`);
+  if (!out.length) return "";
+  return "\n\n那些没人记过的小事：\n" + out.slice(0, 3).join("\n");
+}
+
 function nextNode(){
   onResult = false; lastPick = -1;   // 离开结算页，进入下一条
-  if (idx < STORY.length - 1){ idx++; renderNode(); saveGame(); return; }
+  if (idx < STORY.length - 1){
+    idx++;
+    startShorts(() => { renderNode(); saveGame(); });
+    return;
+  }
 
   // 本幕走完：本章还有下一幕就继续，否则推进阶段
   if (["volunteer","leader","deputy","director"].includes(curChapter) && roundNo < roundTotal){
     roundNo++;
     nextRound();
-    renderNode();
-    saveGame();
+    startShorts(() => { renderNode(); saveGame(); });
     return;
   }
 
-  // 二选一分支节点点完 → 进入选定章（先放颁奖典礼）
+  // 二选一分支节点点完 → 进入选定章（先放颁奖典礼）；二选一是抉择不是一段时间，不出日志
   if (curChapter === "branch"){
     const target = pendingBranch;
     awardNext = () => { pendingBranch = ""; startChapter(target); saveGame(); };
     showAward(target);
     return;
   }
-  // 志愿者章全部走完 → 晋升判定
+  // 志愿者章全部走完 → 先给日志，再晋升判定
   if (curChapter === "volunteer"){
-    if (evalPromotion()){
-      // 已晋升：先放颁奖典礼，再进入小队长章（清空志愿者阶段高危记录，晋升已定避免误判）
-      unlockEnding("leader_promo");
-      awardNext = () => { special = {}; startChapter("leader"); saveGame(); };
-      showAward("leader");
-    } else {
-      showEnding();
-    }
+    maybeShowLog("volunteer", () => {
+      if (evalPromotion()){
+        // 已晋升：先放颁奖典礼，再进入小队长章（清空志愿者阶段高危记录，晋升已定避免误判）
+        unlockEnding("leader_promo");
+        awardNext = () => { special = {}; startChapter("leader"); saveGame(); };
+        showAward("leader");
+      } else {
+        showEnding();
+      }
+    });
     return;
   }
-  // 小队长章全部走完 → 晋升方向二选一
+  // 小队长章全部走完 → 先给日志，再晋升方向二选一
   if (curChapter === "leader"){
-    startBranch();
+    maybeShowLog("leader", () => startBranch());
     return;
   }
-  // 副队长 / 总队长章全部走完 → 对应任期结局
-  showEnding();
+  // 副队长 / 总队长章全部走完 → 先给日志，再对应任期结局
+  maybeShowLog(curChapter, () => showEnding());
 }
 
 // 晋升判定阈值（公益初心 8 / 居民信任 3 / 高危事件无负面）
@@ -2414,7 +2774,7 @@ function showEnding(){
     $("e-badge").src = "assets/img/badges/badge_4.png";
     $("e-hero").src = "assets/img/portraits/hero_v3.png";
     $("e-title").textContent = "副队长任期 · 内务统筹";
-    $("e-text").textContent = "从通知别人的人，变成替别人兜底的那个。副队长两年，你把每份月报汇总成册、把台账逐条质控、把老队员的经验沉淀成带教手册。队伍再没因为内务出错塌过一次。金老师拍拍你肩：内务稳，队伍才稳。";
+    $("e-text").textContent = "从通知别人的人，变成替别人兜底的那个。副队长两年，你把每份月报汇总成册、把台账逐条质控、把老队员的经验沉淀成带教手册。队伍再没因为内务出错塌过一次。金老师拍拍你肩：内务稳，队伍才稳。" + endingExcerpt();
     $("e-check").innerHTML =
       `副队长任期已满 · 对内内务线：月报汇总 / 台账质控 / 经验沉淀 / 内部带教<br>` +
       `<span style="color:var(--red)">${lastUnlock}</span>`;
@@ -2432,7 +2792,7 @@ function showEnding(){
     $("e-badge").src = "assets/img/badges/badge_4.png";
     $("e-hero").src = "assets/img/portraits/hero_v4.png";
     $("e-title").textContent = "总队长任期 · 全域统筹";
-    $("e-text").textContent = "从带一组人，到扛一整片社区。总队长两年，你代表队伍对接金老师、统筹会议、把项目推到全域自运转，还交出了三年战略提案。有人问你累不累，你说：看着大家不用再等指令就往前走，这比什么都值。";
+    $("e-text").textContent = "从带一组人，到扛一整片社区。总队长两年，你代表队伍对接金老师、统筹会议、把项目推到全域自运转，还交出了三年战略提案。有人问你累不累，你说：看着大家不用再等指令就往前走，这比什么都值。" + endingExcerpt();
     $("e-check").innerHTML =
       `总队长任期已满 · 对外全局线：对接金老师 / 会议统筹 / 项目发展 / 全域自运转<br>` +
       `<span style="color:var(--red)">${lastUnlock}</span>`;
@@ -2472,7 +2832,7 @@ function showEnding(){
   else if (g >= 4) eid = "retain";
   else eid = "utilitarian";
   unlockEnding(eid);
-  $("e-text").textContent = text;
+  $("e-text").textContent = text + endingExcerpt();   // 末尾附三年日志摘录
 
   // 晋升判定明细：让玩家清楚差在哪一项
   const mark = ok => ok
