@@ -900,7 +900,7 @@ const SHORT_POOL = [
     acts:[{t:"立刻截图上报", m:"rep_now"},{t:"先记着，明早再说", m:"rep_wait"},{t:"等别人处理", m:"rep_none"}] },
   { id:"k07", tag:"居民互动", ch:["volunteer"], night:false,
     desc:"三号楼李阿姨在群里问：楼道灯坏了找谁？",
-    acts:[{t:"回她具体流程", m:"reply_resident"},{t:"回一句「我帮您问问」", m:"hand_off"},{t:"装没看见", m:"ignore_resident"}] },
+    acts:[{t:"截图存着，先看着", m:"note_resident"},{t:"转给社区对接人", m:"hand_off"},{t:"装没看见", m:"ignore_resident"}] },
   { id:"k08", tag:"学业冲突", ch:["volunteer","leader"], night:false,
     desc:"明天两门专业课连考，今晚还得交周报。",
     acts:[{t:"先把周报交了再复习", m:"duty_first"},{t:"先复习，周报明早补", m:"study_first"},{t:"两边都拖到最后一刻", m:"both_late"}] },
@@ -909,13 +909,13 @@ const SHORT_POOL = [
     acts:[{t:"觉得总有人会看到", m:"inner_yes"},{t:"不确定有没有意义", m:"inner_doubt"},{t:"没什么感觉", m:"inner_numb"}] },
   { id:"k10", tag:"群聊", ch:["volunteer"], night:false,
     desc:"群里聊起周末线下团建，你一次都没去过。",
-    acts:[{t:"接一句「下次一定去」", m:"chat_join"},{t:"看着不说话", m:"chat_lurk"},{t:"屏蔽这个群", m:"chat_away"}] },
+    acts:[{t:"把团建记在心里，想以后去", m:"chat_note"},{t:"看着不说话", m:"chat_lurk"},{t:"屏蔽这个群", m:"chat_away"}] },
   { id:"k11", tag:"招新", ch:["volunteer","leader"], night:false,
     desc:"群里进了两个新志愿者头像，没人说话。",
-    acts:[{t:"主动 @ 打个招呼", m:"recruit_push"},{t:"等别人先招呼", m:"recruit_wait"},{t:"没管", m:"recruit_none"}] },
+    acts:[{t:"主动私聊打个招呼", m:"recruit_push"},{t:"等别人先招呼", m:"recruit_wait"},{t:"没管", m:"recruit_none"}] },
   { id:"k12", tag:"居民互动", ch:["volunteer"], night:false,
     desc:"有人 @ 你问社区活动怎么报名，你其实也不清楚。",
-    acts:[{t:"去翻公告查清楚再回", m:"reply_resident"},{t:"回「我帮您问问」", m:"hand_off"},{t:"没回", m:"ignore_resident"}] },
+    acts:[{t:"记下来，明天查清楚", m:"note_resident"},{t:"转给对接人问清楚", m:"hand_off"},{t:"没回", m:"ignore_resident"}] },
 
   { id:"k13", tag:"转发推文", ch:["leader"], night:false,
     desc:"现在轮到你给组员分转发任务了。",
@@ -931,7 +931,7 @@ const SHORT_POOL = [
     acts:[{t:"从头翻一遍", m:"read_care"},{t:"快速刷一眼", m:"read_skim"},{t:"看完 @ 我的就退出", m:"read_skip"}] },
   { id:"k17", tag:"居民互动", ch:["leader"], night:false,
     desc:"居民在群里抱怨楼道堆物，语气很冲。",
-    acts:[{t:"先共情再解释", m:"reply_resident"},{t:"转给社区对接人", m:"hand_off"},{t:"等他气消", m:"ignore_resident"}] },
+    acts:[{t:"截图存着，先看着", m:"note_resident"},{t:"转给社区对接人处理", m:"hand_off"},{t:"等他气消", m:"ignore_resident"}] },
   { id:"k18", tag:"学业冲突", ch:["leader"], night:false,
     desc:"期中考周，队里刚好要交月报汇总。",
     acts:[{t:"熬夜两边都做完", m:"duty_first"},{t:"先考试，月报请组员代交", m:"study_first"},{t:"两边都迟了", m:"both_late"}] },
@@ -946,13 +946,13 @@ const SHORT_POOL = [
     acts:[{t:"有点不安，重新点开", m:"inner_yes"},{t:"觉得这样效率高", m:"inner_numb"},{t:"怀疑这些有没有人看", m:"inner_doubt"}] },
   { id:"k22", tag:"群聊", ch:["leader"], night:false,
     desc:"老队员在群里开玩笑，新来的不敢接话。",
-    acts:[{t:"带新人接一句", m:"chat_join"},{t:"看着", m:"chat_lurk"},{t:"没看", m:"chat_away"}] },
+    acts:[{t:"私聊新人问问情况", m:"chat_dm"},{t:"看着", m:"chat_lurk"},{t:"没看", m:"chat_away"}] },
   { id:"k23", tag:"上报舆情", ch:["leader"], night:false,
     desc:"群里出现一条外地传言，你判断是假的。",
     acts:[{t:"立刻做辟谣科普", m:"rep_now"},{t:"上报等指示", m:"rep_wait"},{t:"觉得会自己平息", m:"rep_none"}] },
   { id:"k24", tag:"居民互动", ch:["leader"], night:true,
     desc:"晚上十点，有居民在群里问明天还办公吗。",
-    acts:[{t:"查完公告回他", m:"reply_resident"},{t:"说明天帮您问", m:"hand_off"},{t:"第二天才看到", m:"ignore_resident"}] },
+    acts:[{t:"记下来，明天查公告", m:"note_resident"},{t:"转给对接人", m:"hand_off"},{t:"第二天才看到", m:"ignore_resident"}] },
 
   { id:"k25", tag:"内务汇总", ch:["deputy"], night:false,
     desc:"各小队月报交上来，格式全不一样。",
@@ -974,13 +974,13 @@ const SHORT_POOL = [
     acts:[{t:"逐条看", m:"read_care"},{t:"扫一眼", m:"read_skim"},{t:"只看未读数字", m:"read_skip"}] },
   { id:"k31", tag:"居民互动", ch:["deputy"], night:false,
     desc:"有居民记得你，群里 @ 你问去年的事。",
-    acts:[{t:"翻记录回答", m:"reply_resident"},{t:"转给对接人", m:"hand_off"},{t:"已读不回", m:"ignore_resident"}] },
+    acts:[{t:"翻记录记下来", m:"note_resident"},{t:"转给对接人", m:"hand_off"},{t:"已读不回", m:"ignore_resident"}] },
   { id:"k32", tag:"上报舆情", ch:["deputy"], night:false,
     desc:"一条高危舆情，今天你值班。",
     acts:[{t:"立刻按流程上报", m:"rep_now"},{t:"先核实再报", m:"rep_wait"},{t:"交给小队长", m:"rep_none"}] },
   { id:"k33", tag:"群聊", ch:["deputy"], night:false,
     desc:"换届后，群里少了一半人说话。",
-    acts:[{t:"主动抛个话题", m:"chat_join"},{t:"看着", m:"chat_lurk"},{t:"已经很少打开", m:"chat_away"}] },
+    acts:[{t:"把冷清记下来，想了想", m:"chat_note"},{t:"看着", m:"chat_lurk"},{t:"已经很少打开", m:"chat_away"}] },
   { id:"k34", tag:"招新", ch:["deputy"], night:false,
     desc:"新一届招新，报名的人比去年少。",
     acts:[{t:"逐个私聊邀请", m:"recruit_push"},{t:"群里发个通知", m:"recruit_wait"},{t:"顺其自然", m:"recruit_none"}] },
@@ -1011,10 +1011,10 @@ const SHORT_POOL = [
     acts:[{t:"亲自去宣讲", m:"recruit_push"},{t:"发个通知", m:"recruit_wait"},{t:"交给别人招", m:"recruit_none"}] },
   { id:"k43", tag:"居民互动", ch:["director"], night:false,
     desc:"有居民说：你们换得太快，刚熟就走了。",
-    acts:[{t:"认真解释回访机制", m:"reply_resident"},{t:"说会反馈上去", m:"hand_off"},{t:"没接话", m:"ignore_resident"}] },
+    acts:[{t:"记在心里", m:"note_resident"},{t:"转给对接人反馈", m:"hand_off"},{t:"没接话", m:"ignore_resident"}] },
   { id:"k44", tag:"群聊", ch:["director"], night:false,
     desc:"老队员群里有人说舍不得。",
-    acts:[{t:"回一句", m:"chat_join"},{t:"看着", m:"chat_lurk"},{t:"没看", m:"chat_away"}] },
+    acts:[{t:"私聊那位老队员", m:"chat_dm"},{t:"看着", m:"chat_lurk"},{t:"没看", m:"chat_away"}] },
   { id:"k45", tag:"内心时刻", ch:["director"], night:true,
     desc:"深夜整理三年记录，你看到自己第一次转发的那条。",
     acts:[{t:"觉得这一路值得", m:"inner_yes"},{t:"说不上来", m:"inner_doubt"},{t:"只有累", m:"inner_numb"}] },
@@ -2598,8 +2598,8 @@ function buildLog(){
     if (nr) s += `；其中 ${nr} 次是在深夜`;
     L.push(s + "。");
   }
-  if (g("reply_resident") + g("ignore_resident") >= 1)
-    L.push(`你回过 ${g("reply_resident")} 位居民的话，${g("ignore_resident")} 次装作没看见。`);
+  if (g("hand_off") + g("note_resident") + g("ignore_resident") >= 1)
+    L.push(`居民在群里问过你，你转给对接人 ${g("hand_off")} 次，记下来没跟进 ${g("note_resident")} 次，装没看见 ${g("ignore_resident")} 次。`);
   if (g("recruit_push")) L.push(`你主动招呼过 ${g("recruit_push")} 个新人。`);
   if (g("handover_care") + g("handover_rush") + g("handover_none") >= 1)
     L.push(`换届这件事，你认真处理过 ${g("handover_care")} 次，敷衍过 ${g("handover_rush")} 次。`);
@@ -2615,7 +2615,7 @@ function buildLog(){
 function logSign(){
   const g = k => marks[k] || 0;
   const machine   = g("fwd_direct") + g("fwd_skip") + g("src_copy") + g("src_skip") + g("read_skim") + g("read_skip");
-  const careful   = g("fwd_check") + g("src_open") + g("read_care") + g("rep_now") + g("reply_resident") + g("back_scroll");
+  const careful   = g("fwd_check") + g("src_open") + g("read_care") + g("rep_now") + g("hand_off") + g("note_resident") + g("back_scroll");
   const bystander = g("ignore_resident") + g("chat_lurk") + g("chat_away") + g("rep_none") + g("recruit_none");
   if (careful > 0 && careful >= machine && careful >= bystander) return "你把别人的事，当成过自己的事。";
   if (bystander > careful && bystander >= machine) return "你一直在外面看着，包括看着你自己。";
@@ -2646,7 +2646,7 @@ function endingExcerpt(){
   const out = [];
   const fwd = g("fwd_direct") + g("fwd_check") + g("fwd_skip");
   if (fwd) out.push(`你一共转发过 ${fwd} 条推文，其中 ${g("fwd_direct") + g("fwd_skip")} 条没点开过原文。`);
-  if (g("reply_resident")) out.push(`你回答过 ${g("reply_resident")} 位居民的问题，也有 ${g("ignore_resident")} 次装作没看见。`);
+  if (g("hand_off") + g("ignore_resident")) out.push(`居民在群里问过你，你转给对接人 ${g("hand_off")} 次，也有 ${g("ignore_resident")} 次装作没看见。`);
   if (g("rep_now") + g("rep_wait")) out.push(`你上报过 ${g("rep_now") + g("rep_wait")} 次，${g("rep_none")} 次你等着别人先动。`);
   if (g("hesitate")) out.push(`有 ${g("hesitate")} 次，你在两个选项之间停了超过 4 秒。`);
   if (g("inner_doubt")) out.push(`你怀疑过 ${g("inner_doubt")} 次这件事有没有意义，还是转了。`);

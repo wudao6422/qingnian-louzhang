@@ -105,7 +105,7 @@ const driver = `
   // ---- 日志生成 ----
   marks = { done:6, fwd_direct:3, fwd_check:1, src_open:1, src_copy:1,
             read_skim:2, read_care:1, back_scroll:1, rep_now:1, rep_none:1,
-            night_rep_now:1, reply_resident:2, ignore_resident:1, hesitate:2, hesitate_ms:9000 };
+            night_rep_now:1, hand_off:2, ignore_resident:1, hesitate:2, hesitate_ms:9000 };
   const lines = buildLog();
   check('日志 >= 5 行（实得 ' + lines.length + '）', lines.length >= 5);
   check('日志首行说出场次数', /出现过 6 次/.test(lines[0]));
@@ -115,7 +115,7 @@ const driver = `
   check('日志记下犹豫秒数', lines.some(t => /停了超过 4 秒/.test(t) && /9 秒/.test(t)));
 
   // 三种收尾语气都可达
-  marks = { done:3, fwd_check:2, src_open:2, read_care:2, rep_now:2, reply_resident:2 };
+  marks = { done:3, fwd_check:2, src_open:2, read_care:2, rep_now:2, hand_off:2 };
   check('认真型收尾语', logSign().indexOf('当成过自己的事') >= 0);
   marks = { done:3, chat_lurk:2, chat_away:2, ignore_resident:2, rep_none:2 };
   check('旁观型收尾语', logSign().indexOf('看着你自己') >= 0);
@@ -123,7 +123,7 @@ const driver = `
   check('机械型收尾语（默认语）', logSign().indexOf('不在那个社区里') >= 0);
 
   // ---- 章末日志屏 ----
-  marks = { done:4, fwd_direct:2, fwd_check:1, reply_resident:1 };
+  marks = { done:4, fwd_direct:2, fwd_check:1, hand_off:1 };
   let afterLog = false;
   maybeShowLog('volunteer', () => { afterLog = true; });
   check('展示日志屏', el('scr-log')._clsSet.has('active'));
@@ -143,7 +143,7 @@ const driver = `
   check('本月无记录则不出日志', direct === true);
 
   // ---- 结局摘录 ----
-  marksAll = { fwd_direct:5, fwd_check:2, fwd_skip:3, reply_resident:4, ignore_resident:2,
+  marksAll = { fwd_direct:5, fwd_check:2, fwd_skip:3, hand_off:4, ignore_resident:2,
                rep_now:2, rep_wait:1, rep_none:2, hesitate:3, inner_doubt:2 };
   const ex = endingExcerpt();
   check('结局摘录非空', ex.length > 0);
