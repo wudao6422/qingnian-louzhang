@@ -85,7 +85,7 @@
   .sfx-btn img{width:16px; height:16px; display:block; transition:opacity .15s}
   .sfx-btn.off img{opacity:.38}
   /* ===== 页面切换 ===== */
-  .page{position:absolute; inset:24px 0 0 0; display:none; flex-direction:column; background:var(--paper)}
+  .page{position:absolute; inset:52px 0 0 0; display:none; flex-direction:column; background:var(--paper)}
   .page.active{display:flex}
   /* ===== 像素按钮 ===== */
   .pbtn{
@@ -602,6 +602,90 @@
     .side-panel{display:flex}
     .zoom-toggle{display:block}
   }
+
+/* ===== 装饰层（纯 CSS 像素氛围：不抢戏 / 低对比 / 随状态） ===== */
+:root{ --grid-line:rgba(90,79,71,.05); --deco-nav-bg:#241f1c; }
+/* 1) 屏内纹理：让纯白背景变成有质感的像素纸 */
+.story-scroll, .result-scroll, .short-card, .read-panel,
+#award-fx, #scr-cover, #scr-endings, .award-card, .mentor-card{
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 11px, var(--grid-line) 11px 12px),
+    repeating-linear-gradient(90deg, transparent 0 11px, var(--grid-line) 11px 12px);
+  background-size:12px 12px;
+}
+/* 2) 状态栏底纹 */
+.statusbar{ border-bottom:2px solid #000;
+  background-image:repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 2px, transparent 2px 4px); }
+/* 顶部导航条（装饰，纯图标，无交互） */
+.deco-nav{ position:absolute; top:24px; left:0; right:0; height:28px; z-index:40;
+  display:flex; align-items:center; justify-content:space-around;
+  background:var(--deco-nav-bg); border-bottom:2px solid var(--line); }
+.deco-nav button{ display:flex; flex-direction:column; align-items:center; gap:1px;
+  background:none; border:0; cursor:default; color:#cdbfb2; padding:2px 6px;
+  font-family:inherit; font-size:8px; line-height:9px; }
+.deco-nav button svg{ width:14px; height:14px; display:block; image-rendering:pixelated; }
+.deco-nav button.on{ color:var(--gold); }
+/* 3) 通知横幅：像素小横幅，从顶部滑入 */
+.notif{ position:absolute; top:56px; left:8px; right:8px; z-index:55; pointer-events:none;
+  display:flex; align-items:center; gap:7px; padding:6px 8px;
+  background:var(--paper); border:3px solid var(--line); box-shadow:0 3px 0 #b3a89c;
+  transform:translateY(-170%); opacity:0; transition:transform .35s steps(6), opacity .2s; }
+.notif.show{ transform:translateY(0); opacity:1; }
+.notif .n-ava{ width:28px; height:28px; border:2px solid var(--line); background:#fff; flex:none; image-rendering:pixelated; }
+.notif.special .n-ava{ border-color:var(--red); }
+.notif .n-tag{ font-size:9px; line-height:12px; color:#fff; background:var(--blue); padding:0 5px; flex:none; }
+.notif.special .n-tag{ background:var(--red); }
+.notif .n-txt{ font-size:11px; line-height:15px; color:var(--ink); min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* 4) 便签：贴在剧情屏角落，无交互，只是存在 */
+.sticky{ position:absolute; left:6px; bottom:46px; z-index:30; max-width:118px;
+  background:#fff4c2; border:2px solid #d9b94a; border-left:6px solid #e0a020;
+  padding:4px 6px; font-size:9px; line-height:13px; color:#6b5a1f;
+  transform:rotate(-2deg); box-shadow:2px 2px 0 rgba(0,0,0,.12); pointer-events:none; }
+/* 5) 远处居民楼剪影：封面底部极淡天际线 */
+.cover-sky{ position:absolute; left:0; right:0; bottom:0; height:84px; z-index:0; pointer-events:none;
+  background:radial-gradient(circle at 86% 20px, #f2e6c0 0 5px, transparent 6px); }
+.cover-sky .skyline{ position:absolute; left:0; right:0; bottom:0; height:46px; opacity:.5;
+  background:
+    linear-gradient(#3a322c,#3a322c) 4% 100%/14px 30px no-repeat,
+    linear-gradient(#463c34,#463c34) 14% 100%/10px 22px no-repeat,
+    linear-gradient(#3a322c,#3a322c) 24% 100%/18px 38px no-repeat,
+    linear-gradient(#4a3f36,#4a3f36) 38% 100%/12px 26px no-repeat,
+    linear-gradient(#3a322c,#3a322c) 52% 100%/16px 34px no-repeat,
+    linear-gradient(#463c34,#463c34) 64% 100%/10px 20px no-repeat,
+    linear-gradient(#3a322c,#3a322c) 74% 100%/20px 42px no-repeat,
+    linear-gradient(#4a3f36,#4a3f36) 90% 100%/12px 28px no-repeat; }
+#scr-cover > *:not(.cover-sky){ position:relative; z-index:1; }
+/* 6) 群成员面板（装饰，纯 CSS 头像占位） */
+.member-panel{ position:absolute; inset:52px 0 0 0; z-index:58; display:none;
+  background:rgba(30,24,20,.55); padding:14px; }
+.member-panel.on{ display:block; }
+.member-card{ background:var(--paper); border:3px solid var(--line); max-width:300px;
+  margin:0 auto; padding:10px; box-shadow:0 6px 0 #b3a89c; }
+.member-card h3{ font-size:13px; line-height:18px; margin-bottom:6px; color:var(--ink); }
+.member-row{ display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed #c9bdb6; }
+.member-row:last-child{ border-bottom:0; }
+.m-ava{ width:24px; height:24px; border:2px solid var(--line); flex:none; image-rendering:pixelated;
+  background-image:repeating-linear-gradient(0deg, rgba(0,0,0,.10) 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.10) 0 2px, transparent 2px 4px); background-size:4px 4px; }
+.m-name{ font-size:11px; line-height:15px; color:var(--ink); flex:1; min-width:0; }
+.m-role{ font-size:9px; line-height:12px; padding:0 5px; border:2px solid var(--line); flex:none; }
+.m-role.r-work{ background:#dfeaf5; }
+.m-role.r-res{ background:#f7e3df; }
+.m-role.r-vol{ background:#dff0dd; }
+/* 7) 像素日历（封面） */
+.pixel-cal{ width:100%; max-width:300px; margin:6px auto 4px; background:var(--card);
+  border:2px solid var(--line); padding:6px 8px; flex:none; }
+.pixel-cal .cal-h{ display:flex; justify-content:space-between; font-size:11px; line-height:15px; color:var(--ink); margin-bottom:4px; }
+.pixel-cal .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.pixel-cal .cal-d{ aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  font-size:9px; line-height:10px; color:var(--muted); border:1px solid #e2d8cc; }
+.pixel-cal .cal-d.circle{ color:#fff; background:var(--red); border-color:var(--red-d); font-weight:bold; }
+.pixel-cal .cal-mark{ font-size:9px; line-height:12px; color:var(--red); margin-top:3px; }
+/* 群成员按钮（node-bar 内） */
+.node-members{ font-family:inherit; font-size:9px; line-height:12px; padding:2px 6px; margin-left:6px;
+  background:#fff; border:2px solid var(--line); color:var(--muted); cursor:pointer; box-shadow:0 2px 0 #b3a89c; }
+.node-members:active{ transform:translateY(2px); box-shadow:none; }
 </style>
 </head>
 <body data-page-node-id="bJ2XAG2BE8uCs8fcGlfQA9">
@@ -632,8 +716,31 @@
       </span>
     </div>
 
+    <!-- 顶部导航条（装饰，纯图标，无交互） -->
+    <nav class="deco-nav" aria-hidden="true">
+      <button type="button" class="on"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="1" y="2" width="14" height="9" fill="currentColor"/><rect x="4" y="11" width="3" height="3" fill="currentColor"/><rect x="3" y="5" width="9" height="1" fill="#241f1c"/><rect x="3" y="7" width="6" height="1" fill="#241f1c"/></svg>群聊</button>
+      <button type="button"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="5" y="2" width="6" height="5" fill="currentColor"/><rect x="3" y="8" width="10" height="6" fill="currentColor"/></svg>私聊</button>
+      <button type="button"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="currentColor"/><rect x="5" y="4" width="6" height="2" fill="currentColor"/><rect x="4" y="6" width="8" height="5" fill="currentColor"/><rect x="6" y="11" width="4" height="2" fill="currentColor"/><rect x="7" y="13" width="2" height="1" fill="currentColor"/></svg>通知</button>
+      <button type="button"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="2" y="2" width="5" height="12" fill="currentColor"/><rect x="9" y="2" width="5" height="12" fill="currentColor"/><rect x="7" y="2" width="2" height="12" fill="#241f1c"/></svg>日志</button>
+    </nav>
+    <!-- 通知横幅（像素小横幅，从顶部滑入） -->
+    <div class="notif" id="notif">
+      <img class="n-ava" id="notif-ava" src="assets/img/avatars/hero_v1.png" alt="">
+      <span class="n-tag" id="notif-tag">通知</span>
+      <span class="n-txt" id="notif-txt"></span>
+    </div>
+    <!-- 群成员面板（装饰） -->
+    <div class="member-panel" id="member-panel" onclick="if(event.target===this)toggleMembers()">
+      <div class="member-card">
+        <h3>3 号楼网格群 · 成员</h3>
+        <div id="member-list"></div>
+        <button class="pbtn ghost" style="width:100%;margin-top:8px" onclick="toggleMembers()">关闭</button>
+      </div>
+    </div>
+
     <!-- 屏 1：封面 -->
     <section class="page active" id="scr-cover" data-page-node-id="4oBTGZnA5j3vkbMXex45Cz">
+      <div class="cover-sky" aria-hidden="true"><div class="skyline"></div></div>
       <img class="cover-img" src="assets/img/scenes/s5_cover.png" width="320" height="240" alt="清晨的小区，一位红马甲志愿者走向居民楼" data-page-node-id="hmeA9ANED27WmCmh3aq3CM">
       <h1 data-page-node-id="5IlKy0DPSGooUBuP7Yrs7i">青年楼长成长记</h1>
       <div class="sub" data-page-node-id="0Mlykm7j2t92c0T0LRE0ZT">像素互动叙事 · 社区志愿者成长</div>
@@ -645,6 +752,11 @@
       <div class="hero-strip" data-page-node-id="tsHpzvsgk1UozkwQOLeDvI">
         <img src="assets/img/portraits/hero_v1.png" height="72" alt="主角 · 普通志愿者" data-page-node-id="cfBt56YFouvIpLLthnF7zN">
         <span data-page-node-id="3DcfCLtzBjejUXBcPV45NN">从一天的网格值守开始</span>
+      </div>
+      <div class="pixel-cal" id="cover-cal">
+        <div class="cal-h"><span id="cal-month">十月</span><span>2026</span></div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-mark" id="cal-mark"></div>
       </div>
       <div class="cover-foot">
         <div class="cf-i"><b>玩法</b><span>接网格事件 · 做出选择 · 属性成长 · 走完你的楼长三年</span></div>
@@ -708,6 +820,7 @@
       <div class="node-bar" id="s-nodebar">
         <span class="node-tag" id="s-tag">日常循环</span>
         <span class="node-trig" id="s-trigger"></span>
+        <button class="node-members" id="btn-members" type="button" onclick="toggleMembers()">群成员</button>
         <span class="node-idx" id="s-idx"></span>
       </div>
       <div class="story-scroll" data-page-node-id="A9uhVEOoKBCVUKSiuME3Yq">
@@ -736,6 +849,7 @@
         </div>
         <div class="opts" id="s-opts" data-page-node-id="yMKnKHS1oqlKfDuyZmpUTG"></div>
         <div class="scroll-hint" id="s-scrollhint">▲ 上滑查看更多</div>
+        <div class="sticky" id="sticky" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -2418,6 +2532,14 @@ function renderNode(){
      </button>`).join("");
   document.querySelector(".story-scroll").scrollTop = 0;
   $("s-scrollhint").classList.remove("show");
+  try {
+    if (n.type === "special" || n.type === "interpersonal") {
+      var _ava = (n.face && n.face !== "hero_v1") ? "assets/img/avatars/" + n.face + ".png" : "assets/img/avatars/hero_v1.png";
+      showBanner(_ava, n.type === "special" ? "高危" : "互动", n.typeTrig || n.title || "", n.type === "special");
+    }
+    var _note = (typeof curChapter !== "undefined" && NOTE[curChapter]) || "";
+    var _st = $("sticky"); if (_st) _st.textContent = _note;
+  } catch(e) {}
   show("scr-story");
 }
 
@@ -2998,9 +3120,58 @@ else if (h === "#measure"){
   document.title = "MEASURE|" + out.join(" ;; ");
 }
 
+// 装饰层：群成员面板 / 像素日历 / 通知横幅（纯 CSS 氛围，无游戏逻辑依赖）
+const MEMBERS = [
+  {n:"金老师", r:"社区工作人员", c:"r-work", col:"#4a90c2"},
+  {n:"张阿姨", r:"居民", c:"r-res", col:"#e8503a"},
+  {n:"老李",   r:"居民", c:"r-res", col:"#3a8f4e"},
+  {n:"小林",   r:"志愿者", c:"r-vol", col:"#8a6fb0"},
+  {n:"王同学", r:"志愿者", c:"r-vol", col:"#f0a020"},
+  {n:"网格员", r:"社区工作人员", c:"r-work", col:"#4a90c2"}
+];
+const NOTE = {
+  volunteer:"盯好 3 号楼网格群，是每天的功课",
+  leader:"小队台账要按时汇总",
+  deputy:"对内：月报与经验沉淀",
+  director:"对外：对接金老师与项目发展"
+};
+function renderMembers(){
+  const box = $("member-list"); if(!box) return;
+  box.innerHTML = MEMBERS.map(m =>
+    '<div class="member-row"><span class="m-ava" style="background-color:' + m.col + '"></span>' +
+    '<span class="m-name">' + m.n + '</span><span class="m-role ' + m.c + '">' + m.r + '</span></div>').join("");
+}
+function renderCalendar(){
+  const cal = $("cover-cal"); if(!cal) return;
+  const month = (typeof curChapter !== "undefined" && CHAPTER_MONTH[curChapter]) || "十月";
+  const cm = $("cal-month"); if(cm) cm.textContent = month;
+  const grid = $("cal-grid"); if(grid){
+    let h = ""; for(let i=1;i<=30;i++){ h += '<div class="cal-d' + ((i===15||i===28)?" circle":"") + '">' + i + '</div>'; }
+    grid.innerHTML = h;
+  }
+  const mk = $("cal-mark"); if(mk) mk.textContent = "● 15 换届选举   ● 28 社区招新";
+}
+function toggleMembers(){
+  const p = $("member-panel"); if(!p) return;
+  p.classList.toggle("on");
+}
+let _notifTimer = null;
+function showBanner(ava, tag, text, special){
+  const el = $("notif"); if(!el) return;
+  const a = $("notif-ava"); if(a) a.src = ava || "assets/img/avatars/hero_v1.png";
+  const t = $("notif-tag"); if(t) t.textContent = tag || "通知";
+  const x = $("notif-txt"); if(x) x.textContent = text || "";
+  el.classList.toggle("special", !!special);
+  el.classList.add("show");
+  clearTimeout(_notifTimer);
+  _notifTimer = setTimeout(function(){ el.classList.remove("show"); }, 2600);
+}
+
 // 宽屏辅助面板：进入任意页面前先填充一次，封面阶段也不留白
 renderSideHud();
 renderProgress();
+renderMembers();
+renderCalendar();
 
 // 封面按钮按有无存档切换：无存档 →「开始游戏」；有存档 →「继续上次进度」+「重新开始」
 updateCoverButtons();
