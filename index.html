@@ -120,40 +120,17 @@
   /* 窄屏上封面内容可能高于容器，必须允许滚动，否则底部元素会被整块裁掉 */
   #scr-cover{align-items:center; text-align:center; overflow-y:auto; padding:0 12px}
   /* max-width 兜住 320px 这类超窄屏：封面图固定 320 宽会横向溢出 */
-  #scr-cover .cover-img{
-    margin:10px 0 12px; width:100%; max-width:320px; height:184px;
-    object-fit:cover; object-position:center 55%;
-    border:3px solid var(--line); flex:none}
+  #scr-cover .cover-img{margin:18px 0 14px; border:3px solid var(--line); max-width:100%; height:auto; flex:none}
   #scr-cover h1{font-size:24px; line-height:30px; letter-spacing:4px; color:var(--ink)}
-  #scr-cover .sub{color:var(--muted); margin:6px 0 2px}
-  #scr-cover .stage-line{color:var(--red); margin-bottom:12px}
+  #scr-cover .sub{color:var(--muted); margin:8px 0 4px}
+  #scr-cover .stage-line{color:var(--red); margin-bottom:14px}
   #scr-cover .pbtn{margin:6px 0 14px}
-  /* 次要操作并排成小按钮行：三颗全宽按钮会把封面顶出屏外 200px */
-  #scr-cover .cover-acts{
-    display:flex; gap:8px; justify-content:center;
-    width:100%; max-width:300px; margin:0 0 10px; flex:none}
-  #scr-cover .cover-acts .pbtn{
-    flex:1 1 0; width:auto; max-width:150px; margin:0;
-    padding:7px 0; font-size:11px; box-shadow:0 3px 0 var(--red-d)}
-  #scr-cover .cover-acts .pbtn.ghost{box-shadow:0 3px 0 #b3a89c}
-  /* 信息行：主角立绘 + 一句话 + 日历 横排，原来竖排要 168px */
-  #scr-cover .cover-row{
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    width:100%; max-width:320px; margin:2px 0 10px; flex:none}
-  #scr-cover .cover-row .cr-por{height:72px; width:auto; flex:none; image-rendering:pixelated}
-  #scr-cover .cover-row .cr-txt{
-    flex:1 1 auto; min-width:0; text-align:left;
-    font-size:10px; line-height:15px; color:var(--muted)}
-  #scr-cover .cover-row .pixel-cal{width:148px; max-width:148px; margin:0; padding:8px 6px 6px; flex:none}
-  #scr-cover .cover-row .cal-h{font-size:9px; line-height:12px}
-  #scr-cover .cover-row .cal-big{margin:3px 0 1px}
-  #scr-cover .cover-row .cal-num{font-size:22px; line-height:24px; padding:1px 5px}
-  #scr-cover .cover-row .cal-wk{font-size:8px; line-height:11px}
+  #scr-cover .hero-strip{display:flex; align-items:flex-end; gap:10px; color:var(--muted); font-size:12px; flex:none}
   /* 封面页脚：玩法 / 素材署名 / 版本，兼作页面收尾，填住底部空白 */
   #scr-cover .cover-foot{
-    width:100%; max-width:300px; margin:auto 0 6px; padding-top:8px;
+    width:100%; max-width:300px; margin:auto 0 12px; padding-top:9px;
     border-top:2px dashed var(--line); text-align:left;
-    color:var(--muted); font-size:9px; line-height:14px; flex:none;
+    color:var(--muted); font-size:10px; line-height:15px; flex:none;
   }
   #scr-cover .cover-foot .cf-i{display:flex; gap:6px}
   #scr-cover .cover-foot .cf-i b{color:var(--ink); font-weight:normal; flex:none}
@@ -665,10 +642,10 @@
   background:#fff4c2; border:2px solid #d9b94a; border-left:6px solid #e0a020;
   padding:4px 6px; font-size:9px; line-height:13px; color:#6b5a1f;
   transform:rotate(-2deg); box-shadow:2px 2px 0 rgba(0,0,0,.12); pointer-events:none; }
-/* 5) 远处居民楼剪影：排在页脚下方、贴屏底的一条，不压字 */
-.cover-sky{ position:relative; width:100%; max-width:320px; height:40px; margin:0 0 2px; flex:none;
-  background:radial-gradient(circle at 86% 12px, #f2e6c0 0 5px, transparent 6px); }
-.cover-sky .skyline{ position:absolute; left:0; right:0; bottom:0; width:100%; height:40px; opacity:.42; display:block; }
+/* 5) 远处居民楼剪影：封面底部极淡天际线 */
+.cover-sky{ position:absolute; left:0; right:0; bottom:0; height:84px; z-index:0; pointer-events:none;
+  background:radial-gradient(circle at 86% 20px, #f2e6c0 0 5px, transparent 6px); }
+.cover-sky .skyline{ position:absolute; left:0; right:0; bottom:0; width:100%; height:46px; opacity:.42; display:block; }
 #scr-cover > *:not(.cover-sky){ position:relative; z-index:1; }
 /* 6) 群成员面板（装饰，纯 CSS 头像占位） */
 .member-panel{ position:absolute; inset:52px 0 0 0; z-index:58; display:none;
@@ -758,33 +735,6 @@
 
     <!-- 屏 1：封面 -->
     <section class="page active" id="scr-cover" data-page-node-id="4oBTGZnA5j3vkbMXex45Cz">
-      <img class="cover-img" src="assets/img/scenes/s5_cover.png" width="320" height="240" alt="清晨的小区，一位红马甲志愿者走向居民楼" data-page-node-id="hmeA9ANED27WmCmh3aq3CM">
-      <h1 data-page-node-id="5IlKy0DPSGooUBuP7Yrs7i">青年楼长成长记</h1>
-      <div class="sub" data-page-node-id="0Mlykm7j2t92c0T0LRE0ZT">像素互动叙事 · 社区志愿者成长</div>
-      <div class="stage-line" data-page-node-id="mFVG8OZqA2BnnIG22YthD4">普通志愿者 → 小队长 → 副队长 / 总队长</div>
-      <button class="pbtn" id="btn-start" onclick="goCreate()" data-page-node-id="pieFqE9NP3HHBjPPFDMxT9">开始游戏</button>
-      <button class="pbtn blue" id="btn-resume" style="display:none; margin-top:10px" onclick="resumeGame()">继续上次进度</button>
-      <div class="cover-acts">
-        <button class="pbtn ghost" id="btn-restart" style="display:none" onclick="askRestart()">重新开始</button>
-        <button class="pbtn ghost" id="btn-endings" onclick="openEndings()">结局收集册</button>
-      </div>
-      <div class="cover-row" data-page-node-id="tsHpzvsgk1UozkwQOLeDvI">
-        <img class="cr-por" src="assets/img/portraits/hero_v1.png" alt="主角 · 普通志愿者" data-page-node-id="cfBt56YFouvIpLLthnF7zN">
-        <span class="cr-txt" data-page-node-id="3DcfCLtzBjejUXBcPV45NN">从一天的<br>网格值守开始</span>
-      <div class="pixel-cal" id="cover-cal">
-        <span class="cal-pin" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" shape-rendering="crispEdges"><rect x="5" y="1" width="4" height="2" fill="#b34a44"/><rect x="4" y="3" width="6" height="3" fill="#cf5b52"/><rect x="5" y="6" width="4" height="3" fill="#8f352f"/><rect x="6" y="9" width="2" height="4" fill="#9a9a9a"/></svg></span>
-        <span class="cal-sprout" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" shape-rendering="crispEdges"><rect x="6" y="7" width="2" height="6" fill="#7a9a5a"/><rect x="3" y="5" width="3" height="2" fill="#8fb56a"/><rect x="2" y="4" width="2" height="2" fill="#8fb56a"/><rect x="8" y="4" width="3" height="2" fill="#9ec477"/><rect x="10" y="3" width="2" height="2" fill="#9ec477"/></svg></span>
-        <div class="cal-bind"><i></i><i></i><i></i></div>
-        <div class="cal-h"><span id="cal-month">本月</span><span id="cal-year"></span></div>
-        <div class="cal-big"><span class="cal-num" id="cal-num">13</span><span class="cal-suffix">日</span></div>
-        <div class="cal-wk" id="cal-wk">周五</div>
-      </div>
-      </div>
-      <div class="cover-foot">
-        <div class="cf-i"><b>玩法</b><span>接网格事件 · 做出选择 · 属性成长 · 走完你的楼长三年</span></div>
-        <div class="cf-i"><b>版本</b><span>v1.0 · 存档与结局收集册保存在本机</span></div>
-        <div class="cf-i"><b>素材</b><span>像素画与音效自制 · BGM「Dreamy Flashback」<br>Kevin MacLeod（CC BY 4.0）</span></div>
-      </div>
       <div class="cover-sky" aria-hidden="true"><svg class="skyline" viewBox="0 0 180 23" preserveAspectRatio="none" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
   <g fill="#3a322c">
     <rect x="0" y="14" width="14" height="9"/>
@@ -818,6 +768,31 @@
     <rect x="168" y="15" width="2" height="2"/>
   </g>
 </svg></div>
+      <img class="cover-img" src="assets/img/scenes/s5_cover.png" width="320" height="240" alt="清晨的小区，一位红马甲志愿者走向居民楼" data-page-node-id="hmeA9ANED27WmCmh3aq3CM">
+      <h1 data-page-node-id="5IlKy0DPSGooUBuP7Yrs7i">青年楼长成长记</h1>
+      <div class="sub" data-page-node-id="0Mlykm7j2t92c0T0LRE0ZT">像素互动叙事 · 社区志愿者成长</div>
+      <div class="stage-line" data-page-node-id="mFVG8OZqA2BnnIG22YthD4">普通志愿者 → 小队长 → 副队长 / 总队长</div>
+      <button class="pbtn" id="btn-start" onclick="goCreate()" data-page-node-id="pieFqE9NP3HHBjPPFDMxT9">开始游戏</button>
+      <button class="pbtn blue" id="btn-resume" style="display:none; margin-top:10px" onclick="resumeGame()">继续上次进度</button>
+      <button class="pbtn ghost" id="btn-restart" style="display:none; margin-top:10px" onclick="askRestart()">重新开始</button>
+      <button class="pbtn ghost" id="btn-endings" style="margin-top:10px" onclick="openEndings()">结局收集册</button>
+      <div class="hero-strip" data-page-node-id="tsHpzvsgk1UozkwQOLeDvI">
+        <img src="assets/img/portraits/hero_v1.png" height="72" alt="主角 · 普通志愿者" data-page-node-id="cfBt56YFouvIpLLthnF7zN">
+        <span data-page-node-id="3DcfCLtzBjejUXBcPV45NN">从一天的网格值守开始</span>
+      </div>
+      <div class="pixel-cal" id="cover-cal">
+        <span class="cal-pin" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" shape-rendering="crispEdges"><rect x="5" y="1" width="4" height="2" fill="#b34a44"/><rect x="4" y="3" width="6" height="3" fill="#cf5b52"/><rect x="5" y="6" width="4" height="3" fill="#8f352f"/><rect x="6" y="9" width="2" height="4" fill="#9a9a9a"/></svg></span>
+        <span class="cal-sprout" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" shape-rendering="crispEdges"><rect x="6" y="7" width="2" height="6" fill="#7a9a5a"/><rect x="3" y="5" width="3" height="2" fill="#8fb56a"/><rect x="2" y="4" width="2" height="2" fill="#8fb56a"/><rect x="8" y="4" width="3" height="2" fill="#9ec477"/><rect x="10" y="3" width="2" height="2" fill="#9ec477"/></svg></span>
+        <div class="cal-bind"><i></i><i></i><i></i></div>
+        <div class="cal-h"><span id="cal-month">本月</span><span id="cal-year"></span></div>
+        <div class="cal-big"><span class="cal-num" id="cal-num">13</span><span class="cal-suffix">日</span></div>
+        <div class="cal-wk" id="cal-wk">周五</div>
+      </div>
+      <div class="cover-foot">
+        <div class="cf-i"><b>玩法</b><span>接网格事件 · 做出选择 · 属性成长 · 走完你的楼长三年</span></div>
+        <div class="cf-i"><b>版本</b><span>v1.0 · 存档与结局收集册保存在本机</span></div>
+        <div class="cf-i"><b>素材</b><span>像素画与音效自制 · BGM「Dreamy Flashback」Kevin MacLeod（CC BY 4.0）</span></div>
+      </div>
     </section>
 
     <!-- 屏 2：创建楼长档案 -->
