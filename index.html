@@ -431,21 +431,50 @@
   }
   .sh-act:active{background:var(--red); color:#fff}
   .sh-foot{color:var(--muted); font-size:10px; line-height:14px; margin-top:9px; text-align:center}
-  /* ===== 章末日志：把隐藏记录还给你 ===== */
+  /* ===== 章末日志：像素笔记本，把隐藏记录还给你 ===== */
   #scr-log{align-items:center; justify-content:center; padding:0 14px; overflow:auto}
   .log-paper{
-    width:100%; max-width:320px; background:var(--card); border:3px solid var(--line);
-    padding:12px 12px 10px; box-shadow:4px 4px 0 rgba(0,0,0,.18);
+    width:100%; max-width:332px; display:flex; align-items:stretch;
+    filter:drop-shadow(4px 4px 0 rgba(0,0,0,.20));
+  }
+  .log-bind{
+    flex:0 0 16px; width:16px; position:relative;
+    background:
+      radial-gradient(circle at 8px 8px, #211c18 0 3px, #6f655b 3px 4.5px, transparent 5px);
+    background-color:var(--paper2);
+    background-size:16px 48px; background-repeat:repeat-y;
+    border:3px solid var(--line); border-right:none;
+    border-radius:5px 0 0 5px;
+  }
+  .log-sheet{
+    --rule:#d8cdbd; --margin:#e7b3a8;
+    position:relative; flex:1 1 auto; min-height:216px;
+    background-color:var(--paper);
+    background-image:
+      repeating-linear-gradient(to bottom, transparent 0 19px, var(--rule) 19px 20px),
+      linear-gradient(to right, transparent 11px, var(--margin) 11px 12px, transparent 12px);
+    border:3px solid var(--line); border-left:none;
+    border-radius:0 5px 5px 0;
+    padding:12px 13px 24px 14px;
   }
   .log-head{
-    font-size:12px; line-height:18px; color:var(--ink);
+    font-size:12px; line-height:18px; color:var(--ink); font-weight:bold;
     border-bottom:2px dashed var(--line); padding-bottom:7px; margin-bottom:9px;
   }
   .log-body{font-size:12px; line-height:20px; color:var(--ink)}
   .log-body .lg{opacity:0; animation:lgin .3s steps(3) forwards}
   @keyframes lgin{to{opacity:1}}
+  .log-hl{
+    color:var(--red); background:#ffe7df; font-weight:bold;
+    padding:0 3px; border-radius:2px; box-shadow:1px 1px 0 rgba(0,0,0,.12);
+    white-space:nowrap;
+  }
   .log-sign{color:var(--muted); font-size:10px; line-height:16px; margin-top:10px}
-  .log-paper .pbtn{margin-top:12px}
+  .log-paper .pbtn{margin-top:14px; width:100%}
+  .log-page{
+    position:absolute; right:10px; bottom:6px;
+    font-size:9px; color:var(--muted); letter-spacing:2px;
+  }
   /* ===== 结局屏 ===== */
   #scr-ending{align-items:center; text-align:center; padding:14px 14px; overflow-y:auto}
   #scr-ending .badge-img{width:64px; height:64px; margin:10px 0 6px}
@@ -726,13 +755,17 @@
       </div>
     </section>
 
-    <!-- 屏 3.6：章末日志 -->
+    <!-- 屏 3.6：章末日志（像素笔记本） -->
     <section class="page" id="scr-log">
       <div class="log-paper">
-        <div class="log-head" id="log-head">本月 · 日志</div>
-        <div class="log-body" id="log-body"></div>
-        <div class="log-sign" id="log-sign"></div>
-        <button class="pbtn" id="log-next">收起日志 →</button>
+        <div class="log-bind" aria-hidden="true"></div>
+        <div class="log-sheet">
+          <div class="log-head" id="log-head">本月 · 日志</div>
+          <div class="log-body" id="log-body"></div>
+          <div class="log-sign" id="log-sign"></div>
+          <button class="pbtn" id="log-next">收起日志 →</button>
+          <div class="log-page" id="log-page">— 01 —</div>
+        </div>
       </div>
     </section>
 
@@ -2480,6 +2513,7 @@ let logNext = null;    // 日志「收起」后的回调
 let logHistory = [];   // 各章日志（备查）
 
 const CHAPTER_MONTH = { volunteer:"十月", leader:"十一月", deputy:"十二月", director:"十二月" };
+const CHAPTER_PAGE  = { volunteer:"01", leader:"02", deputy:"03", director:"04" };
 
 function bump(k, n){
   n = n || 1;
@@ -2539,6 +2573,7 @@ function finishShorts(){
 }
 
 // 章末日志：把隐藏记录还给你
+function hl(n){ return '<span class="log-hl">' + n + '</span>'; }
 function buildLog(){
   const g = k => marks[k] || 0;
   const L = [];
@@ -2592,8 +2627,9 @@ function maybeShowLog(chapter, next){
   if (!lines.length){ next(); return; }
   $("log-head").textContent = `${CHAPTER_MONTH[chapter] || "本月"} · 日志`;
   $("log-body").innerHTML = lines.map((t, i) =>
-    `<div class="lg" style="animation-delay:${(i * 0.18).toFixed(2)}s">${t}</div>`).join("");
+    `<div class="lg" style="animation-delay:${(i * 0.18).toFixed(2)}s">${t.replace(/\d+/g, m => hl(m))}</div>`).join("");
   $("log-sign").textContent = "——" + logSign();
+  $("log-page").textContent = `— ${CHAPTER_PAGE[chapter] || "··"} —`;
   logHistory.push({ chapter, lines, sign: logSign() });
   logNext = next;
   $("log-next").onclick = () => {
