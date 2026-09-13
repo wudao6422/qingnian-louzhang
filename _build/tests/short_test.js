@@ -60,15 +60,27 @@ const driver = `
   const el = id => document.getElementById(id);
 
   // ---- 内容池 ----
-  check('短事件池 45 条', SHORT_POOL.length === 45);
+  check('短事件池 43 条', SHORT_POOL.length === 43);
   check('每条都有 3 个动作', SHORT_POOL.every(s => s.acts && s.acts.length === 3));
   check('每个动作都记隐藏字段', SHORT_POOL.every(s => s.acts.every(a => a.m && a.t)));
+  // 副队长不入驻居民网格群（删 k31），总队长不转发（删 k36），各自少一条
+  const MIN_SHORT = { volunteer:10, leader:10, deputy:9, director:10 };
   ['volunteer','leader','deputy','director'].forEach(ch => {
     const n = SHORT_POOL.filter(s => s.ch.includes(ch)).length;
-    check(ch + ' 章可用短事件 >= 10 条（实得 ' + n + '）', n >= 10);
+    check(ch + ' 章可用短事件 >= ' + MIN_SHORT[ch] + ' 条（实得 ' + n + '）', n >= MIN_SHORT[ch]);
   });
   check('有深夜场景事件', SHORT_POOL.some(s => s.night));
   check('id 无重复', new Set(SHORT_POOL.map(s => s.id)).size === SHORT_POOL.length);
+
+  // ---- 职责口径（2026-09-14 改写后） ----
+  check('「转给别人」按阶段分流，且不再说对接人',
+    HAND_OFF_WORD.volunteer === '请金老师跟进' && HAND_OFF_WORD.leader === '请网格员去现场看' &&
+    HAND_OFF_WORD.director === '请小队长转告' && !/对接人/.test(HAND_OFF_WORD.volunteer + HAND_OFF_WORD.leader + HAND_OFF_WORD.director));
+  check('删掉了 k31 / k36', !SHORT_POOL.some(s => s.id === 'k31' || s.id === 'k36'));
+  check('招新文案改挂总队长章', (SHORT_POOL.find(s => s.id === 'k19') || {}).ch.join() === 'director');
+  check('副队长章不再有居民互动', SHORT_POOL.filter(s => s.ch.includes('deputy')).every(s => s.tag !== '居民互动'));
+  check('总队长章不再有转发事件', SHORT_POOL.filter(s => s.ch.includes('director')).every(s => s.tag !== '转发推文'));
+  check('k24 改挂群聊标记', SHORT_POOL.find(s => s.id === 'k24').acts.map(a => a.m).join() === 'chat_note,chat_lurk,chat_away');
 
   // ---- 抽取：1~3 个、不重复 ----
   curChapter = 'volunteer';
