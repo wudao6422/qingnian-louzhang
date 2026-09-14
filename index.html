@@ -623,7 +623,9 @@
 .deco-nav button{ display:flex; flex-direction:column; align-items:center; gap:1px;
   background:none; border:0; cursor:default; color:#cdbfb2; padding:2px 6px;
   font-family:inherit; font-size:8px; line-height:9px; }
-.deco-nav button svg{ width:14px; height:14px; display:block; image-rendering:pixelated; }
+.deco-nav button svg,.deco-nav button .nav-icon{ width:14px; height:14px; display:block; image-rendering:pixelated; }
+.deco-nav button .nav-icon{ opacity:.92; }
+.deco-nav button.on .nav-icon{ opacity:1; transform:scale(1.08); }
 .deco-nav button.on{ color:var(--gold); }
 /* 3) 通知横幅：像素小横幅，从顶部滑入 */
 .notif{ position:absolute; top:56px; left:8px; right:8px; z-index:55; pointer-events:none;
@@ -713,10 +715,10 @@
 
     <!-- 顶部导航条（装饰，纯图标，无交互） -->
     <nav class="deco-nav" aria-hidden="true">
-      <button type="button" class="on"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="1" y="2" width="14" height="9" fill="currentColor"/><rect x="4" y="11" width="3" height="3" fill="currentColor"/><rect x="3" y="5" width="9" height="1" fill="#241f1c"/><rect x="3" y="7" width="6" height="1" fill="#241f1c"/></svg>群聊</button>
-      <button type="button"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="5" y="2" width="6" height="5" fill="currentColor"/><rect x="3" y="8" width="10" height="6" fill="currentColor"/></svg>私聊</button>
-      <button type="button"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="currentColor"/><rect x="5" y="4" width="6" height="2" fill="currentColor"/><rect x="4" y="6" width="8" height="5" fill="currentColor"/><rect x="6" y="11" width="4" height="2" fill="currentColor"/><rect x="7" y="13" width="2" height="1" fill="currentColor"/></svg>通知</button>
-      <button type="button"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="2" y="2" width="5" height="12" fill="currentColor"/><rect x="9" y="2" width="5" height="12" fill="currentColor"/><rect x="7" y="2" width="2" height="12" fill="#241f1c"/></svg>日志</button>
+      <button type="button" class="on"><img class="nav-icon" src="assets/img/icons/icon_chat.png" alt="">群聊</button>
+      <button type="button"><img class="nav-icon" src="assets/img/icons/icon_dm.png" alt="">私聊</button>
+      <button type="button"><img class="nav-icon" src="assets/img/icons/icon_bell.png" alt="">通知</button>
+      <button type="button"><img class="nav-icon" src="assets/img/icons/icon_log.png" alt="">日志</button>
     </nav>
     <!-- 通知横幅（像素小横幅，从顶部滑入） -->
     <div class="notif" id="notif">
