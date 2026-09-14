@@ -1218,7 +1218,7 @@ const VOLUNTEER_POOL = [
         review:"线下实践履历空白，晋升评审时缺少实践支撑，综合评分偏低。",
         promo:"线下实践履历空白，晋升评审时缺少实践支撑，综合评分偏低。" },
     ]},
-  { id:"v4", title:"轮值转发科普内容", type:"daily", scene:"s1_groupchat", face:"hero_v1",
+  { id:"v4", title:"轮值转发科普内容", type:"daily", scene:"s7_bed", face:"hero_v1",
     desc:"现在时间还不算太晚，顺手把科普消息发完就能结束当日任务……",
     inner:"特意留存到明天还要额外记挂，没必要在意居民休息时间。",
     opts:[
@@ -1344,7 +1344,7 @@ const VOLUNTEER_POOL = [
   // feedback→review，promotion→promo；高危节点 good/specialPositive、bad/specialNegative。
   const LEADER_POOL = [
     { id:"l1", title:"志愿活动，去还是不去？", type:"daily", typeLabel:"小队长管理", typeTrig:"管理履职 · 随机触发",
-      scene:"s1_groupchat", face:"jin",
+      scene:"s8_window_day", face:"jin",
       desc:"小队长沟通群弹出金老师发布的线下志愿活动，时间段恰好在你没课的空档。",
       inner:"加综测分、丰富简历的念头一闪而过，可去的话要自己掏车费，还得一个个问组员谁有空，到了现场还要拍照、组织。参加，真的划算吗？",
       opts:[
@@ -1424,7 +1424,7 @@ const VOLUNTEER_POOL = [
           promo:"缺乏闭环意识会阻碍晋升。", specialNegative:true },
       ]},
     { id:"l6", title:"组员深夜转发科普，你提醒还是不提醒？", type:"daily", typeLabel:"小队长管理", typeTrig:"管理履职 · 随机触发",
-      scene:"s1_groupchat", face:"zuyuan",
+      scene:"s9_window_night", face:"zuyuan",
       desc:"你发现一名组员在晚上10点半把科普消息转发到了网格群。",
       inner:"都发了，再提醒他是不是小题大做？居民可能已经休息了。",
       opts:[
@@ -1508,7 +1508,7 @@ const VOLUNTEER_POOL = [
 // ===== 副队长章剧情池（8 条，取自 青春楼长.html DEPUTY_POOL，属性键已映射）=====
 const DEPUTY_POOL = [
   { id:"d1", title:"月报收集：分阶段提醒还是临时催促？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
-    scene:"s1_groupchat", face:"xiaodui",
+    scene:"s6_desk", face:"xiaodui",
     desc:"你担任副队长，负责统筹全队月报。各小队经常拖延，汇总出错率高。",
     inner:"反正最后都能收齐，截止日当天催一下就行了吧？",
     opts:[
@@ -1522,7 +1522,7 @@ const DEPUTY_POOL = [
         promo:"拖延管理会影响团队整体绩效。" },
     ]},
   { id:"d2", title:"月报校验：逐项核对还是粗略浏览？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
-    scene:"s4_meeting", face:"hero_v3",
+    scene:"s6_desk", face:"hero_v3",
     desc:"各小队提交了月报，你需要汇总成一份全队报告。",
     inner:"粗略看看没有大问题就直接汇总吧，省时间。",
     opts:[
@@ -1536,7 +1536,7 @@ const DEPUTY_POOL = [
         promo:"数据失实会损害团队信誉。" },
     ]},
   { id:"d3", title:"优秀经验挖掘：主动筛选还是坐等提交？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
-    scene:"s4_meeting", face:"hero_v3",
+    scene:"s13_map", face:"hero_v3",
     desc:"你需要从各小队月报中提炼可推广的优秀做法。",
     inner:"等各小队主动上报亮点吧，省得自己翻。",
     opts:[
@@ -1550,7 +1550,7 @@ const DEPUTY_POOL = [
         promo:"缺乏主动挖掘会浪费团队宝贵经验。" },
     ]},
   { id:"d4", title:"月报档案：分类存档还是杂乱堆放？", type:"deputy", typeLabel:"副队长·内务", typeTrig:"副队长履职 · 随机触发",
-    scene:"s4_meeting", face:"hero_v3",
+    scene:"s6_desk", face:"hero_v3",
     desc:"你需要整理历年月报档案，以便未来复盘。",
     inner:"压缩打包存起来就行，以后要查再找。",
     opts:[
@@ -1680,7 +1680,7 @@ const DIRECTOR_POOL = [
         promo:"忽视敏感节点会引发严重后果。" },
     ]},
   { id:"r5", title:"下一学年工作计划撰写：创新还是照搬？", type:"director", typeLabel:"总队长·全局", typeTrig:"总队长履职 · 随机触发",
-    scene:"s4_meeting", face:"hero_v4",
+    scene:"s13_map", face:"hero_v4",
     desc:"你需要撰写下一学年的工作计划，为团队定方向。",
     inner:"直接沿用去年的模板，改一下年份就行。",
     opts:[
@@ -1957,6 +1957,7 @@ function renderHud(){
     ? `三项管理属性已启用：${LOCK_NAMES}`
     : `管理属性未解锁：${LOCK_NAMES}（晋升小队长后启用）`;
   renderSideHud();
+  renderPlant();
 }
 
 // 宽屏左面板：属性常驻（始终显示全部 8 项当前数值，晋升前锁定项灰显）
@@ -1978,6 +1979,20 @@ function renderSideHud(){
   if (lock) lock.textContent = promoted
     ? `管理属性已启用：${LOCK_NAMES}`
     : `管理属性未解锁：${LOCK_NAMES}（晋升后启用）`;
+}
+
+// 宽屏右面板：我的绿植（公益初心可视化），随 gongyi 三档切换
+function plantState(){
+  const g = state.gongyi || 0;
+  if (g >= 8) return {img:"s10_plant_lush", tx:"公益初心 · 茂盛"};
+  if (g >= 4) return {img:"s11_plant_ok",   tx:"公益初心 · 还行"};
+  return {img:"s12_plant_dry", tx:"公益初心 · 待浇灌"};
+}
+function renderPlant(){
+  const el = $("side-plant"); if (!el) return;
+  const p = plantState();
+  el.src = `assets/img/scenes/${p.img}.png`;
+  const tx = $("side-plant-tx"); if (tx) tx.textContent = p.tx;
 }
 
 // 宽屏右面板：章节进度（成长四阶 + 当前阶段节点进度）

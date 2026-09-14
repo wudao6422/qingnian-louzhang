@@ -55,7 +55,7 @@ const VOLUNTEER_POOL = [
         review:"线下实践履历空白，晋升评审时缺少实践支撑，综合评分偏低。",
         promo:"线下实践履历空白，晋升评审时缺少实践支撑，综合评分偏低。" },
     ]},
-  { id:"v4", title:"轮值转发科普内容", type:"daily", scene:"s1_groupchat", face:"hero_v1",
+  { id:"v4", title:"轮值转发科普内容", type:"daily", scene:"s7_bed", face:"hero_v1",
     desc:"现在时间还不算太晚，顺手把科普消息发完就能结束当日任务……",
     inner:"特意留存到明天还要额外记挂，没必要在意居民休息时间。",
     opts:[
