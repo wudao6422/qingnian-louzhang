@@ -847,7 +847,7 @@
 
     <!-- 屏 3：剧情 -->
     <section class="page" id="scr-story" data-page-node-id="2Ai9v8aoqZBDotYLBUIYBJ">
-      <div class="arch-bar"><span class="nm" id="a-name">小楼</span><span id="a-info">社会工作 · 大一</span></div>
+      <div class="arch-bar"><span class="nm" id="a-name">小楼</span><span id="a-info">大一</span></div>
       <div class="hud" id="hud" data-page-node-id="lDIQj2Kxkm2inuZ0KrZfhL"></div>
       <div class="lock-note" id="hud-lock"></div>
       <div class="node-bar" id="s-nodebar">
@@ -1858,7 +1858,7 @@ const MAJOR_BONUS = {
   "公共事业管理": {now:{juece:1},             after:{tongchou:1, xietiao:1}},
   "政治学与行政学":{now:{minrui:1, juece:1},  after:{duiwai:1}},
 };
-let profile = {name:"小楼", grade:"大一", major:"社会工作"};
+let profile = {name:"小楼", grade:"大一", major:""};
 // 晋升后才生效的档案加成，先存着
 let pendingBonus = {};
 
@@ -1899,8 +1899,9 @@ function renderProfile(){
     `<button class="chip ${g === profile.grade ? "on" : ""}" onclick="setGrade('${g}')">${g}</button>`).join("");
   $("p-major").innerHTML = MAJORS.map(m =>
     `<button class="chip ${m === profile.major ? "on" : ""}" onclick="setMajor('${m}')">${m}</button>`).join("");
-  const now = Object.assign({}, MAJOR_BONUS[profile.major].now, GRADE_BONUS[profile.grade].now);
-  const after = Object.assign({}, MAJOR_BONUS[profile.major].after, GRADE_BONUS[profile.grade].after);
+  const majBonus = MAJOR_BONUS[profile.major] || {now:{}, after:{}};
+  const now = Object.assign({}, majBonus.now, GRADE_BONUS[profile.grade].now);
+  const after = Object.assign({}, majBonus.after, GRADE_BONUS[profile.grade].after);
   $("p-bonus").innerHTML =
     `入学加成：${fmtBonus(now)}<br>` +
     `<span class="dim">晋升后解锁：${fmtBonus(after)}</span>`;
@@ -1927,11 +1928,12 @@ function confirmProfile(){
   const n = $("p-name").value.trim();
   profile.name = n ? n.slice(0, 8) : "小楼";
   resetState();   // 清掉上一周目残留，回到干净基线
-  const now = Object.assign({}, MAJOR_BONUS[profile.major].now, GRADE_BONUS[profile.grade].now);
+  const majBonus = MAJOR_BONUS[profile.major] || {now:{}, after:{}};
+  const now = Object.assign({}, majBonus.now, GRADE_BONUS[profile.grade].now);
   for (const k in now) state[k] += now[k];
-  pendingBonus = Object.assign({}, MAJOR_BONUS[profile.major].after, GRADE_BONUS[profile.grade].after);
+  pendingBonus = Object.assign({}, majBonus.after, GRADE_BONUS[profile.grade].after);
   $("a-name").textContent = profile.name;
-  $("a-info").textContent = `${profile.major} · ${profile.grade}`;
+  $("a-info").textContent = `${(profile.major ? profile.major + " · " : "")}${profile.grade}`;
   if (startPoint === "deputy" || startPoint === "director") startDirect(startPoint);
   else startGame();
 }
@@ -2458,7 +2460,7 @@ function resumeGame(){
   idx = Math.min(idx, STORY.length - 1);
   // 4. 恢复档案栏与手机里的展示
   $("a-name").textContent = profile.name;
-  $("a-info").textContent = `${profile.major} · ${profile.grade}`;
+  $("a-info").textContent = `${(profile.major ? profile.major + " · " : "")}${profile.grade}`;
   renderNode();
   // 5. 若存档停在结算页，直接还原结算页，避免让玩家重选
   if (onResult && lastPick >= 0){
@@ -2986,7 +2988,7 @@ function showEnding(){
       `副队长任期已满 · 对内内务线：月报汇总 / 台账质控 / 经验沉淀 / 内部带教<br>` +
       `<span style="color:var(--red)">${lastUnlock}</span>`;
     $("e-stats").innerHTML =
-      `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${profile.major} · ${profile.grade}</div>` +
+      `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${(profile.major ? profile.major + " · " : "")}${profile.grade}</div>` +
       ATTR.map(a => `${a.name} ${state[a.key]}`).join(" ｜ ");
     showSwitchButton("deputy");
     show("scr-ending");
@@ -3004,7 +3006,7 @@ function showEnding(){
       `总队长任期已满 · 对外全局线：对接金老师 / 会议统筹 / 项目发展 / 全域自运转<br>` +
       `<span style="color:var(--red)">${lastUnlock}</span>`;
     $("e-stats").innerHTML =
-      `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${profile.major} · ${profile.grade}</div>` +
+      `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${(profile.major ? profile.major + " · " : "")}${profile.grade}</div>` +
       ATTR.map(a => `${a.name} ${state[a.key]}`).join(" ｜ ");
     showSwitchButton("director");
     show("scr-ending");
@@ -3051,7 +3053,7 @@ function showEnding(){
     `<span style="color:${promoted ? "var(--red)" : "var(--muted)"}">${lastUnlock}</span>`;
 
   $("e-stats").innerHTML =
-    `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${profile.major} · ${profile.grade}</div>` +
+    `<div style="margin-bottom:6px;color:var(--ink)">${profile.name} · ${(profile.major ? profile.major + " · " : "")}${profile.grade}</div>` +
     ATTR.map(a => {
       const v = state[a.key];
       let shown;
