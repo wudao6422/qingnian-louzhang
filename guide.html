@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>青年楼长成长记 · 像素版 — 玩法说明</title>
+<style>
+  :root{
+    --red:#e8503a; --red-d:#c63f2c; --ink:#2b2622; --muted:#8a7d72;
+    --line:#cbb9a8; --bg:#fbf3e9; --card:#fffaf3; --shadow:#3a2e2a;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{height:100%}
+  body{
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding: 18px 14px 40px;
+    display:flex; justify-content:center;
+  }
+  .wrap{ width:100%; max-width:440px; }
+  .topbar{ height:8px; background:var(--red);
+    box-shadow:0 4px 0 0 var(--shadow); margin-bottom:18px; }
+  .banner{
+    width:100%; height:150px; object-fit:cover;
+    border:3px solid var(--ink);
+    image-rendering:pixelated;
+    background:var(--card);
+    display:block; margin-bottom:14px;
+  }
+  h1{ font-family: ui-monospace, "Courier New", monospace;
+    font-size:22px; letter-spacing:2px; text-align:center; color:var(--ink); }
+  .sub{ text-align:center; color:var(--muted); font-size:13px; margin:6px 0 18px; }
+  .card{
+    background:var(--card); border:3px solid var(--ink);
+    padding:16px 16px 18px; margin-bottom:16px;
+    box-shadow:4px 4px 0 0 var(--shadow);
+  }
+  .card h2{ font-size:15px; letter-spacing:1px; margin-bottom:10px;
+    display:flex; align-items:center; gap:8px; }
+  .card h2::before{ content:""; width:10px; height:10px; background:var(--red);
+    display:inline-block; box-shadow:2px 2px 0 0 var(--shadow); }
+  .intro{ font-size:14px; color:var(--ink); }
+  .steps{ list-style:none; counter-reset:s; }
+  .steps li{ position:relative; padding:10px 0 10px 44px;
+    border-bottom:1px dashed var(--line); }
+  .steps li:last-child{ border-bottom:none; }
+  .steps li::before{
+    counter-increment:s; content:counter(s);
+    position:absolute; left:0; top:10px;
+    width:30px; height:30px; background:var(--red); color:#fff;
+    font-family:ui-monospace,monospace; font-size:15px; font-weight:bold;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:2px 2px 0 0 var(--shadow);
+  }
+  .steps b{ color:var(--red-d); }
+  .notes{ margin:4px 0 0; padding-left:18px; }
+  .notes li{ margin:6px 0; font-size:13px; color:var(--ink); }
+  .play{
+    display:block; width:100%; text-align:center;
+    background:var(--red); color:#fff;
+    font-size:17px; letter-spacing:2px; font-weight:bold;
+    text-decoration:none; padding:14px 0; margin:8px 0 6px;
+    border:3px solid var(--ink); box-shadow:4px 4px 0 0 var(--shadow);
+  }
+  .play:active{ transform:translate(2px,2px); box-shadow:2px 2px 0 0 var(--shadow); }
+  .foot{ text-align:center; color:var(--muted); font-size:11px; margin-top:14px; line-height:1.7; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar"></div>
+    <img class="banner" src="assets/img/scenes/s5_cover.png" alt="清晨的小区，一位红马甲志愿者走向居民楼">
+    <h1>青年楼长成长记 · 像素版</h1>
+    <p class="sub">一个关于大学生志愿者从普通志愿者成长为青年楼长的叙事小游戏</p>
+
+    <div class="card">
+      <h2>这是什么</h2>
+      <p class="intro">你扮演一名社会工作专业的大学生，从「普通志愿者」起步，经历真实又琐碎的社区小事，在每一次选择里慢慢长成能扛事的「青年楼长」。没有标准答案，你的取向决定你能走到哪一层、解锁哪种结局。</p>
+    </div>
+
+    <div class="card">
+      <h2>怎么玩（五步）</h2>
+      <ol class="steps">
+        <li><b>创建档案</b>：点「开始游戏」，取个昵称、定下你的初始性格倾向。</li>
+        <li><b>读处境</b>：每一幕先给你一段社区真实处境（带当事人），再给你一段「我的内心独白」——那是你真实的犹豫与想法，慢一点读。</li>
+        <li><b>做选择</b>：下面 2–3 个选项，凭直觉选一个，剧情会按你的选择推进。</li>
+        <li><b>看成长</b>：每个选项都会悄悄影响你的能力属性与隐藏的「公益初心」（用 ★ 显示进度，不剧透数值）。</li>
+        <li><b>攒结局</b>：不同路线解锁不同结局，封面「结局收集册」记录你已解锁的。</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>几个小提醒</h2>
+      <ul class="notes">
+        <li>进度自动存在你这台手机的浏览器里，关掉再开可「继续游戏」；换手机或清缓存会清零（纯前端，无服务器）。</li>
+        <li>「高危」事件选错会留下负面记录，影响晋升，务必看清再选。</li>
+        <li>鼓励多周目：同一条路也能玩出不同走向，集齐结局收集册。</li>
+        <li>全部剧情 / 美术 / 音乐均为原创或免费授权，可离线运行。</li>
+      </ul>
+    </div>
+
+    <a class="play" href="index.html">开始游戏 →</a>
+    <p class="foot">青年楼长成长记 · 像素版 ｜ 常州大学「青」力「新」为团队 参赛作品<br>纯静态单页 · 适配手机竖屏 · 桌面浏览器亦支持</p>
+  </div>
+</body>
+</html>
